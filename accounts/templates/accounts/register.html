@@ -1,55 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .form-box {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 10px;
-            width: 320px;
-        }
-        input {
-            width: 100%;
-            margin: 8px 0;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #3b82f6;
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #2563eb;
-        }
-    </style>
-</head>
-<body>
-    <div class="form-box">
-        <h2>Create Account</h2>
+{% extends 'base.html' %}
 
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
+{% block content %}
+<h2>Create Account</h2>
 
-            <button type="submit">Register</button>
-        </form>
-    </div>
-</body>
-</html>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
+{% endblock %}

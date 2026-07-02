@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BuildMate AI</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: white;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .nav-links a {
+            color: #cbd5f5;
+            margin-left: 20px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        
+        .nav-links a.active {
+            color: #3b82f6
+        }
+
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            padding: 40px;
+            min-height: 80vh;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: centre;
+            padding: 20px;
+            background: #020617;
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">BuildMate AI</div>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="content">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    © 2026 BuildMate AI — Built by Kaloyan 🚀
+</div>
+
+</body>
+</html>
