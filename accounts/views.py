@@ -47,3 +47,5 @@ def logout_view(request):
 def profile_view(request):
     return render(request, 'accounts/profile.html')
 
+def home_view(request):
+    return render(request, 'home.html')

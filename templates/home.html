@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="hero">
+    
+    <!-- background image -->
+    <div class="hero-bg"></div>
+
+    <!-- glass card -->
+    <div class="hero-card">
+        <h1>Plan Your DIY Projects with AI</h1>
+        <p>
+            Turn your ideas into structured build plans with materials, cost estimates,
+            and step-by-step guidance.
+        </p>
+
+        <div class="buttons">
+            {% url 'register' %}Get Started</a>
+            {% url 'login' %}Login</a>
+        </div>
+    </div>
+
+</section>
+
+
+<style>
+
+.hero {
+    position: relative;
+    height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* background image */
+.hero-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url("{% static 'images/bg.jpg' %}") no-repeat center;
+    background-size: cover;
+    filter: brightness(0.35);
+}
+
+/* glass card */
+.hero-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 50px;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    animation: floatIn 1s ease;
+}
+
+/* text */
+.hero-card h1 {
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+.hero-card p {
+    color: #cbd5f5;
+    margin-bottom: 30px;
+}
+
+/* buttons */
+.buttons a {
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 5px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.buttons a:first-child {
+    background: #3b82f6;
+    color: white;
+}
+
+.buttons a:first-child:hover {
+    background: #2563eb;
+}
+
+.buttons a:last-child {
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
+}
+
+.buttons a:last-child:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+/* animation */
+@keyframes floatIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+
+{% endblock %}

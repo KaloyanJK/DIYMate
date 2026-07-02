@@ -20,7 +20,7 @@ class RegisterForm(UserCreationForm):
         email = self.cleaned_data.get('email')
 
         # Check if email already exists
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Email already exists")
 
         return email
