@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     
     'accounts',
     'projects',
+    'planner',
     
     # # Cloudinary
     # 'cloudinary',

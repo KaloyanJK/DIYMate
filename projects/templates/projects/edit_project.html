@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <div class="form-card">
+
+        <h2>Edit Project</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <!-- FORM FIELDS -->
+            <div class="form-group">
+                <label>Title</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group">
+                <label>Dimensions</label>
+                {{ form.dimensions }}
+            </div>
+
+            <div class="form-group">
+                <label>Budget (£)</label>
+                {{ form.budget }}
+            </div>
+
+            <div class="form-group">
+                <label>Image URL</label>
+                {{ form.image_url }}
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="btn-group">
+    
+                <button type="submit" class="btn save">
+                    Save Changes
+                </button>
+
+                <a href="{% url 'project_detail' project.id %}" class="btn cancel">
+                    Cancel
+                </a>
+
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ✅ STYLING -->
+
+<style>
+
+.form-container {
+    display: flex;
+    justify-content: centre;
+    align-items: centre;
+    min-height: 80vh;
+}
+
+/* CARD */
+.form-card {
+    background: rgba(255,255,255,0.05);
+    padding: 40px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 500px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.form-card h2 {
+    margin-bottom: 20px;
+}
+
+/* INPUT GROUP */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #cbd5f5;
+}
+
+/* INPUTS */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #020617;
+    color: white;
+}
+
+input:focus, textarea:focus {
+    outline: 2px solid #3b82f6;
+}
+
+/* BUTTONS */
+.btn-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* SAVE BUTTON */
+.save {
+    background: #22c55e;
+    color: white;
+}
+
+.save:hover {
+    background: #16a34a;
+}
+
+/* CANCEL LINK */
+.cancel {
+    color: #94a3b8;
+    align-self: centre;
+}
+
+.cancel:hover {
+    color: white;
+}
+
+</style>
+
+{% endblock %}

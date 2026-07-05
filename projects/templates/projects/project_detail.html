@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+    <!-- PROJECT HEADER -->
+    <div class="project-header">
+        <h1>{{ project.title }}</h1>
+        <p class="meta">
+            Budget: £{{ project.budget }} • Dimensions: {{ project.dimensions }}
+        </p>
+    </div>
+
+    <!-- PROJECT DESCRIPTION -->
+    <div class="project-card">
+        <h3>Description</h3>
+        <p>{{ project.description }}</p>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="actions">
+
+        <a href="{% url 'generate_plan' project.id %}" class="btn primary">
+            Generate AI Plan
+        </a>
+
+        <a href="{% url 'edit_project' project.id %}" class="btn edit">
+            Edit
+        </a>
+
+        <a href="{% url 'delete_project' project.id %}" class="btn delete">
+            Delete
+        </a>
+
+    </div>
+
+    <!-- AI PLANS SECTION -->
+    <h2 class="section-title">AI Generated Plans</h2>
+
+    {% for plan in project.aiplan_set.all %}
+
+    <div class="ai-card">
+
+        <!-- MATERIALS -->
+        <div class="ai-section">
+            <h4>Materials</h4>
+            <ul>
+                {% for m in plan.materials %}
+                    <li>{{ m }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- STEPS -->
+        <div class="ai-section">
+            <h4>Steps</h4>
+            <ol>
+                {% for step in plan.steps %}
+                    <li>{{ step }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <!-- COST -->
+        <p><strong>Estimated Cost:</strong> £{{ plan.cost }}</p>
+
+        <!-- SAFETY -->
+        <p><strong>Safety:</strong> {{ plan.safety }}</p>
+
+        <!-- TIMESTAMPS -->
+        <p class="timestamp">
+            Created: {{ plan.created_at|date:"d M Y H:i" }}
+        </p>
+
+        {% if plan.updated_at %}
+        <p class="timestamp">
+            Updated: {{ plan.updated_at|date:"d M Y H:i" }}
+        </p>
+        {% endif %}
+
+    </div>
+
+    {% empty %}
+        <div class="empty-state">
+            <p>No AI plans yet</p>
+            <small>Click “Generate AI Plan” to get started 🚀</small>
+        </div>
+    {% endfor %}
+
+</div>
+
+<!-- ✅ STYLING -->
+
+<style>
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+/* HEADER */
+.project-header h1 {
+    margin-bottom: 5px;
+}
+
+.meta {
+    color: #94a3b8;
+}
+
+/* CARD */
+.project-card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+/* BUTTONS */
+.actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s ease;
+    display: inline-block;
+}
+
+/* CORRECTED BUTTON STYLES */
+.primary {
+    background: #3b82f6;
+    color: white;
+}
+.primary:hover {
+    background: #2563eb;
+}
+
+.edit {
+    background: #f59e0b;
+    color: white;
+}
+.edit:hover {
+    background: #d97706;
+}
+
+.delete {
+    background: #ef4444;
+    color: white;
+}
+.delete:hover {
+    background: #dc2626;
+}
+
+/* AI */
+.section-title {
+    margin-bottom: 20px;
+}
+
+/* AI CARD */
+.ai-card {
+    background: rgba(255,255,255,0.05);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.ai-section {
+    margin-bottom: 15px;
+}
+
+.ai-section h4 {
+    margin-bottom: 10px;
+}
+
+/* LISTS */
+ul, ol {
+    padding-left: 20px;
+}
+
+/* TIMESTAMP */
+.timestamp {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 10px;
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    margin-top: 40px;
+    color: #94a3b8;
+}
+
+</style>
+
+{% endblock %}

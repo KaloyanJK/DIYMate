@@ -46,7 +46,10 @@ def edit_project(request, pk):
     else:
         form = ProjectForm(instance=project)
 
-    return render(request, 'projects/edit_project.html', {'form': form})
+    return render(request, 'projects/edit_project.html', {
+        'form': form,
+        'project': project
+        })
 
 
 # DELETE

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="delete-box">
+    <h2>Delete Project</h2>
+
+    <p>Are you sure you want to delete:</p>
+    <strong>{{ project.title }}</strong>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button class="delete-btn">Yes, Delete</button>
+    </form>
+
+    <br>
+
+    <a url 'project_detail' project.id %}Cancel</a>
+</div>
+
+<style>
+.delete-box {
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+}
+</style>
+
+{% endblock %}
