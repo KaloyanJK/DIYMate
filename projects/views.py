@@ -3,7 +3,7 @@ from .models import Project
 from .forms import ProjectForm
 from django.contrib.auth.decorators import login_required
 
-# CREATE
+
 @login_required
 def create_project(request):
     if request.method == 'POST':
@@ -19,21 +19,18 @@ def create_project(request):
     return render(request, 'projects/create_project.html', {'form': form})
 
 
-# READ (LIST)
 @login_required
 def project_list(request):
     projects = Project.objects.filter(user=request.user)
     return render(request, 'projects/project_list.html', {'projects': projects})
 
 
-# READ (DETAIL)
 @login_required
 def project_detail(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)
     return render(request, 'projects/project_detail.html', {'project': project})
 
 
-# UPDATE
 @login_required
 def edit_project(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)
@@ -42,17 +39,16 @@ def edit_project(request, pk):
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
-            return redirect('project_list')
+            return redirect('project_detail', pk=project.id)
     else:
         form = ProjectForm(instance=project)
 
     return render(request, 'projects/edit_project.html', {
         'form': form,
         'project': project
-        })
+    })
 
 
-# DELETE
 @login_required
 def delete_project(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)

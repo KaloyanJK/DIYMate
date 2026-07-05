@@ -3,11 +3,12 @@ from projects.models import Project
 from .models import AIPlan
 from django.contrib.auth.decorators import login_required
 
+
 @login_required
 def generate_plan(request, project_id):
     project = get_object_or_404(Project, id=project_id, user=request.user)
 
-    # Fake AI response (we simulate first)
+    # FAKE AI RESPONSE
     ai_result = {
         "materials": ["Wood planks", "Screws", "Concrete"],
         "steps": [
@@ -21,7 +22,7 @@ def generate_plan(request, project_id):
         "safety": "Wear gloves and eye protection"
     }
 
-    # SAVE TO DATABASE
+    # SAVE PLAN
     AIPlan.objects.create(
         project=project,
         materials=ai_result["materials"],
