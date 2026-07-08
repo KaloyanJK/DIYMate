@@ -113,6 +113,7 @@
 
         {% if user.is_authenticated %}
             <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'billing_info' %}">Billing</a>
             <a href="{% url 'project_list' %}">Projects</a>
             <a href="{% url 'account_logout' %}">Logout</a>
         {% else %}

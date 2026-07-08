@@ -138,6 +138,49 @@ def _build_checkout_line_item():
     }, ''
 
 
+def _format_currency(amount, currency):
+    symbols = {
+        'gbp': '£',
+        'usd': '$',
+        'eur': '€',
+    }
+    symbol = symbols.get(currency.lower(), f'{currency.upper()} ')
+    return f'{symbol}{amount:.2f}'
+
+
+def _get_billing_display_context():
+    price_reference = (settings.STRIPE_PRICE_ID_PREMIUM or '').strip()
+    currency = getattr(settings, 'STRIPE_CURRENCY', 'usd').lower()
+    interval = getattr(settings, 'STRIPE_PREMIUM_INTERVAL', 'month')
+    if interval not in {'day', 'week', 'month', 'year'}:
+        interval = 'month'
+
+    if price_reference.startswith('price_'):
+        return {
+            'price_label': 'Configured in Stripe Dashboard',
+            'price_reference': price_reference,
+            'currency': currency.upper(),
+            'interval': interval,
+        }
+
+    try:
+        amount = Decimal(price_reference)
+    except InvalidOperation:
+        return {
+            'price_label': 'Not configured',
+            'price_reference': price_reference,
+            'currency': currency.upper(),
+            'interval': interval,
+        }
+
+    return {
+        'price_label': _format_currency(amount, currency),
+        'price_reference': price_reference,
+        'currency': currency.upper(),
+        'interval': interval,
+    }
+
+
 def _get_or_create_stripe_customer(subscription):
     if subscription.stripe_customer_id:
         return subscription.stripe_customer_id
@@ -150,6 +193,18 @@ def _get_or_create_stripe_customer(subscription):
     subscription.stripe_customer_id = customer['id']
     subscription.save(update_fields=['stripe_customer_id', 'updated_at'])
     return customer['id']
+
+
+@login_required
+def billing_info_view(request):
+    subscription = get_or_create_subscription(request.user)
+    pricing = _get_billing_display_context()
+    return render(request, 'accounts/billing_info.html', {
+        'subscription': subscription,
+        'pricing': pricing,
+        'free_ai_limit': get_free_ai_limit(),
+        'remaining_free_generations': remaining_free_generations(subscription),
+    })
 
 
 @login_required
