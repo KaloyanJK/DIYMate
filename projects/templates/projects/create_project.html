@@ -1,11 +1,93 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Create Project</h2>
+<div class="page-shell">
+    <div class="form-card">
+        <h2>Create Project</h2>
+        <p class="subtitle">Create your project and generate its AI plan in one step.</p>
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create</button>
-</form>
+        <form method="POST" class="styled-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">Create & Generate</button>
+        </form>
+    </div>
+</div>
+
+<style>
+.page-shell {
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+}
+
+.form-card {
+    width: min(100%, 720px);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+    box-sizing: border-box;
+}
+
+.form-card h2 {
+    margin: 0 0 8px;
+    font-size: 24px;
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin: 0 0 20px;
+}
+
+.styled-form p {
+    margin: 0 0 14px;
+}
+
+.styled-form label {
+    display: block;
+    font-size: 14px;
+    color: #cbd5f5;
+    margin-bottom: 6px;
+}
+
+.styled-form input,
+.styled-form textarea,
+.styled-form select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.6);
+    color: white;
+}
+
+.styled-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.styled-form input:focus,
+.styled-form textarea:focus,
+.styled-form select:focus {
+    outline: 2px solid rgba(59, 130, 246, 0.7);
+    outline-offset: 1px;
+}
+
+.submit-btn {
+    margin-top: 10px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.submit-btn:hover {
+    background: #2563eb;
+}
+</style>
 {% endblock %}

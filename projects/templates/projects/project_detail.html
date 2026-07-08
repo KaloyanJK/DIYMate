@@ -4,6 +4,22 @@
 
 <div class="container">
 
+    <div class="project-nav">
+        {% if previous_project %}
+        <a href="{% url 'project_detail' previous_project.id %}" class="nav-link">← Previous Project</a>
+        {% else %}
+        <span class="nav-link disabled">← Previous Project</span>
+        {% endif %}
+
+        <a href="{% url 'project_list' %}" class="nav-link">All Projects</a>
+
+        {% if next_project %}
+        <a href="{% url 'project_detail' next_project.id %}" class="nav-link">Next Project →</a>
+        {% else %}
+        <span class="nav-link disabled">Next Project →</span>
+        {% endif %}
+    </div>
+
     <!-- PROJECT HEADER -->
     <div class="project-header">
         <h1>{{ project.title }}</h1>
@@ -38,169 +54,223 @@
     <!-- AI PLANS SECTION -->
     <h2 class="section-title">AI Generated Plans</h2>
 
-    {% for plan in project.plans.all %}
-
-    <div class="ai-card">
-
-        <!-- MATERIALS -->
-        <div class="ai-section">
-            <h4>Materials</h4>
-            <ul>
-                {% for m in plan.materials %}
-                    <li>{{ m }}</li>
+    {% if project.plans.all %}
+    <div class="table-wrapper">
+        <table class="plans-table">
+            <thead>
+                <tr>
+                    <th>Materials</th>
+                    <th>Estimated Cost</th>
+                    <th>Safety</th>
+                    <th>Timeline</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plan in project.plans.all %}
+                <tr>
+                    <td>
+                        <ul>
+                            {% for m in plan.materials %}
+                                <li>{{ m }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>£{{ plan.cost }}</td>
+                    <td>{{ plan.safety }}</td>
+                    <td>
+                        <span class="timestamp">Created: {{ plan.created_at|date:"d M Y H:i" }}</span>
+                        {% if plan.updated_at and plan.updated_at != plan.created_at %}
+                        <br>
+                        <span class="timestamp">Updated: {{ plan.updated_at|date:"d M Y H:i" }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
-            </ul>
-        </div>
+            </tbody>
+        </table>
+    </div>
 
-        <!-- STEPS -->
-        <div class="ai-section">
-            <h4>Steps</h4>
+    <div class="instructions-section">
+        <h3>Detailed Build Instructions</h3>
+        {% for plan in project.plans.all %}
+        <div class="instructions-card">
             <ol>
                 {% for step in plan.steps %}
                     <li>{{ step }}</li>
                 {% endfor %}
             </ol>
         </div>
-
-        <!-- COST -->
-        <p><strong>Estimated Cost:</strong> £{{ plan.cost }}</p>
-
-        <!-- SAFETY -->
-        <p><strong>Safety:</strong> {{ plan.safety }}</p>
-
-        <!-- TIMESTAMPS -->
-        <p class="timestamp">
-            Created: {{ plan.created_at|date:"d M Y H:i" }}
-        </p>
-
-        {% if plan.updated_at %}
-        <p class="timestamp">
-            Updated: {{ plan.updated_at|date:"d M Y H:i" }}
-        </p>
-        {% endif %}
-
+        {% endfor %}
     </div>
-
-    {% empty %}
+    {% else %}
         <div class="empty-state">
             <p>No AI plans yet</p>
             <small>Click “Generate AI Plan” to get started 🚀</small>
         </div>
-    {% endfor %}
+    {% endif %}
 
 </div>
 
 <!-- ✅ STYLING -->
 
 <style>
-
 .container {
-    max-width: 900px;
-    margin: auto;
+    max-width: 980px;
+    margin: 0 auto;
 }
 
-/* HEADER */
+.project-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.nav-link {
+    color: #93c5fd;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-link:hover {
+    color: #dbeafe;
+}
+
+.nav-link.disabled {
+    color: #64748b;
+    pointer-events: none;
+}
+
 .project-header h1 {
-    margin-bottom: 5px;
+    margin: 0 0 6px;
+    font-size: 28px;
 }
 
 .meta {
     color: #94a3b8;
+    margin: 0 0 18px;
 }
 
-/* CARD */
-.project-card {
-    background: rgba(255,255,255,0.05);
+.project-card,
+.instructions-card,
+.empty-state {
+    background: rgba(255, 255, 255, 0.06);
     padding: 20px;
-    border-radius: 12px;
-    margin: 20px 0;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
 }
 
-/* BUTTONS */
+.project-card {
+    margin: 18px 0 24px;
+}
+
 .actions {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
 }
 
 .btn {
     text-decoration: none;
-    padding: 12px 18px;
-    border-radius: 8px;
+    padding: 12px 16px;
+    border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
     transition: 0.3s ease;
     display: inline-block;
 }
 
-/* CORRECTED BUTTON STYLES */
-.primary {
+.btn.primary {
     background: #3b82f6;
     color: white;
 }
-.primary:hover {
+
+.btn.primary:hover {
     background: #2563eb;
 }
 
-.edit {
+.btn.edit {
     background: #f59e0b;
     color: white;
 }
-.edit:hover {
+
+.btn.edit:hover {
     background: #d97706;
 }
 
-.delete {
+.btn.delete {
     background: #ef4444;
     color: white;
 }
-.delete:hover {
+
+.btn.delete:hover {
     background: #dc2626;
 }
 
-/* AI */
 .section-title {
-    margin-bottom: 20px;
+    margin: 0 0 16px;
 }
 
-/* AI CARD */
-.ai-card {
-    background: rgba(255,255,255,0.05);
-    padding: 25px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+.table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 24px;
 }
 
-.ai-section {
-    margin-bottom: 15px;
+.plans-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-.ai-section h4 {
-    margin-bottom: 10px;
+.plans-table th,
+.plans-table td {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px;
+    vertical-align: top;
 }
 
-/* LISTS */
-ul, ol {
+.plans-table th {
+    background: rgba(59, 130, 246, 0.18);
+    text-align: left;
+}
+
+.plans-table td {
+    color: #e2e8f0;
+}
+
+ul,
+ol {
     padding-left: 20px;
+    margin: 0;
 }
 
-/* TIMESTAMP */
+.instructions-section {
+    margin-top: 24px;
+}
+
+.instructions-card {
+    margin-bottom: 12px;
+}
+
 .timestamp {
     font-size: 12px;
     color: #64748b;
-    margin-top: 10px;
+    display: block;
+    margin-top: 4px;
 }
 
-/* EMPTY STATE */
 .empty-state {
     text-align: center;
-    margin-top: 40px;
     color: #94a3b8;
 }
-
 </style>
 
 {% endblock %}

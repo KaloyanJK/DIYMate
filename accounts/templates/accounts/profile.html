@@ -1,9 +1,147 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Welcome {{ request.user.username }}</h1>
 
-<p>Email: {{ request.user.email }}</p>
+<div class="profile-container">
 
-<a href="{% url 'account_logout' %}">Logout</a>
+    <div class="profile-card">
+
+        <div class="avatar">
+            {{ request.user.username|first|upper }}
+        </div>
+
+        <h1>{{ request.user.username }}</h1>
+        <p class="email">{{ request.user.email }}</p>
+
+        <div class="user-info">
+            <span><strong>First Name:</strong> {{ request.user.first_name|default:"Not set" }}</span>
+            <span><strong>Last Name:</strong> {{ request.user.last_name|default:"Not set" }}</span>
+            <span><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not set" }}</span>
+            <span><strong>Address:</strong> {{ profile.address|default:"Not set" }}</span>
+        </div>
+
+        <div class="actions">
+            <a href="{% url 'edit_profile' %}" class="btn primary">Edit Profile</a>
+            <a href="/projects/" class="btn secondary">View Projects</a>
+            <a href="{% url 'account_logout' %}" class="btn danger">Log Out</a>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 24px 16px;
+}
+
+.profile-card {
+    width: min(100%, 560px);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 16px;
+}
+
+.profile-card h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+}
+
+.email {
+    color: #94a3b8;
+    margin: 0 0 20px;
+}
+
+.user-info {
+    width: 100%;
+    display: grid;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.user-info span {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    color: #cbd5f5;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.user-info strong {
+    color: #e2e8f0;
+}
+
+.actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.btn.primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn.primary:hover {
+    background: #2563eb;
+}
+
+.btn.secondary {
+    background: #64748b;
+    color: white;
+}
+
+.btn.secondary:hover {
+    background: #475569;
+}
+
+.btn.danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn.danger:hover {
+    background: #dc2626;
+}
+</style>
+
 {% endblock %}

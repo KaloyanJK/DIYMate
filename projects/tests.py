@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -37,6 +39,107 @@ class ProjectDetailTests(TestCase):
         self.assertContains(response, 'AI Generated Plans')
         self.assertContains(response, 'Wood boards')
         self.assertContains(response, 'Measure the area')
+
+    def test_delete_project_page_renders(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('delete_project', kwargs={'pk': self.project.pk}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Delete Project')
+
+    def test_generating_plan_replaces_existing_plan_for_project(self):
+        AIPlan.objects.create(
+            project=self.project,
+            materials=['Old boards'],
+            steps=['Old step'],
+            cost='10.00',
+            safety='Old safety',
+        )
+
+        fake_response = type('Response', (), {
+            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["New boards"], "steps": ["New step"], "cost": 25, "safety": "New safety"}'})()})()]
+        })()
+
+        self.client.force_login(self.user)
+        with patch('planner.views.client.chat.completions.create', return_value=fake_response):
+            response = self.client.get(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
+
+        self.assertEqual(response.status_code, 302)
+        plans = AIPlan.objects.filter(project=self.project)
+        self.assertEqual(plans.count(), 1)
+        self.assertEqual(plans.first().materials, ['New boards'])
+        self.assertEqual(plans.first().steps, ['New step'])
+        self.assertEqual(plans.first().cost, 25)
+        self.assertEqual(plans.first().safety, 'New safety')
+
+    def test_create_project_generates_plan_and_redirects_to_detail(self):
+        fake_response = type('Response', (), {
+            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["New boards"], "steps": ["New step"], "cost": 30, "safety": "Use care"}'})()})()]
+        })()
+
+        self.client.force_login(self.user)
+        with patch('projects.views.client.chat.completions.create', return_value=fake_response):
+            response = self.client.post(reverse('create_project'), {
+                'title': 'New Project',
+                'description': 'A new project',
+                'dimensions': '8x10',
+                'budget': '600',
+            })
+
+        project = Project.objects.get(title='New Project')
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('project_detail', kwargs={'pk': project.pk}))
+        plans = AIPlan.objects.filter(project=project)
+        self.assertEqual(plans.count(), 1)
+        self.assertEqual(plans.first().materials, ['New boards'])
+
+    def test_edit_project_generates_new_plan_and_redirects_to_detail(self):
+        AIPlan.objects.create(
+            project=self.project,
+            materials=['Old boards'],
+            steps=['Old step'],
+            cost='10.00',
+            safety='Old safety',
+        )
+
+        fake_response = type('Response', (), {
+            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["Updated boards"], "steps": ["Updated step"], "cost": 45, "safety": "Updated safety"}'})()})()]
+        })()
+
+        self.client.force_login(self.user)
+        with patch('projects.views.client.chat.completions.create', return_value=fake_response):
+            response = self.client.post(reverse('edit_project', kwargs={'pk': self.project.pk}), {
+                'title': 'Garden Shed',
+                'description': 'Updated description',
+                'dimensions': '4x6',
+                'budget': '500',
+            })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('project_detail', kwargs={'pk': self.project.pk}))
+        plans = AIPlan.objects.filter(project=self.project)
+        self.assertEqual(plans.count(), 1)
+        self.assertEqual(plans.first().materials, ['Updated boards'])
+        self.assertEqual(plans.first().steps, ['Updated step'])
+
+    def test_create_project_normalizes_generated_steps(self):
+        fake_response = type('Response', (), {
+            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["Boards"], "steps": ["1.1 Measure the area", "2.2 Cut the boards"], "cost": 20, "safety": "Use care"}'})()})()]
+        })()
+
+        self.client.force_login(self.user)
+        with patch('projects.views.client.chat.completions.create', return_value=fake_response):
+            response = self.client.post(reverse('create_project'), {
+                'title': 'Normalized Project',
+                'description': 'A test project',
+                'dimensions': '4x6',
+                'budget': '300',
+            })
+
+        project = Project.objects.get(title='Normalized Project')
+        self.assertEqual(response.status_code, 302)
+        plan = AIPlan.objects.get(project=project)
+        self.assertEqual(plan.steps, ['Measure the area', 'Cut the boards'])
 
 
 class ProjectListTests(TestCase):

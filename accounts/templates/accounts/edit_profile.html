@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-shell">
+    <div class="card">
+        <h2>Edit Profile</h2>
+        <p class="subtitle">Update your details and save them here.</p>
+
+        <form method="post" class="profile-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div>
+                    <label for="id_first_name">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div>
+                    <label for="id_last_name">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+                <div>
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                </div>
+                <div>
+                    <label for="id_phone_number">Phone Number</label>
+                    {{ form.phone_number }}
+                </div>
+                <div class="full-width">
+                    <label for="id_address">Address</label>
+                    {{ form.address }}
+                </div>
+            </div>
+            <div class="actions">
+                <button type="submit" class="btn primary">Save Changes</button>
+                <a href="{% url 'profile' %}" class="btn secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.page-shell {
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+}
+
+.card {
+    width: 100%;
+    max-width: 680px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+    box-sizing: border-box;
+}
+
+.card h2 {
+    margin: 0 0 6px;
+    font-size: 24px;
+}
+
+.subtitle {
+    margin: 0 0 20px;
+    color: #94a3b8;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.profile-form label {
+    display: block;
+    margin-bottom: 6px;
+    color: #cbd5f5;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-form input,
+.profile-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.6);
+    color: white;
+}
+
+.profile-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn.primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn.primary:hover {
+    background: #2563eb;
+}
+
+.btn.secondary {
+    background: #64748b;
+    color: white;
+}
+
+.btn.secondary:hover {
+    background: #475569;
+}
+</style>
+{% endblock %}

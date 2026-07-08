@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import redirect, render
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, ProfileForm, RegisterForm
+from .models import Profile
 
 
 def home_view(request):
@@ -55,4 +56,20 @@ def signup_view(request):
 
 @login_required
 def profile_view(request):
-    return render(request, 'accounts/profile.html')
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    return render(request, 'accounts/profile.html', {'profile': profile})
+
+
+@login_required
+def edit_profile_view(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, user=request.user, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(user=request.user, instance=profile)
+
+    return render(request, 'accounts/edit_profile.html', {'form': form, 'profile': profile})

@@ -58,71 +58,78 @@
 <!-- ✅ STYLING -->
 
 <style>
-
 .form-container {
     display: flex;
-    justify-content: centre;
-    align-items: centre;
+    justify-content: center;
+    align-items: center;
     min-height: 80vh;
+    padding: 24px 16px;
 }
 
-/* CARD */
 .form-card {
-    background: rgba(255,255,255,0.05);
-    padding: 40px;
-    border-radius: 15px;
-    width: 100%;
-    max-width: 500px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    width: min(100%, 620px);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+    box-sizing: border-box;
 }
 
 .form-card h2 {
-    margin-bottom: 20px;
+    margin: 0 0 20px;
+    font-size: 24px;
 }
 
-/* INPUT GROUP */
 .form-group {
     margin-bottom: 15px;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     font-size: 14px;
     color: #cbd5f5;
+    font-weight: 600;
 }
 
-/* INPUTS */
-input, textarea {
+input,
+textarea {
     width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    background: #020617;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.6);
     color: white;
 }
 
-input:focus, textarea:focus {
-    outline: 2px solid #3b82f6;
+textarea {
+    min-height: 110px;
+    resize: vertical;
 }
 
-/* BUTTONS */
+input:focus,
+textarea:focus {
+    outline: 2px solid rgba(59, 130, 246, 0.7);
+    outline-offset: 1px;
+}
+
 .btn-group {
     margin-top: 20px;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .btn {
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
     text-decoration: none;
     border: none;
     cursor: pointer;
+    font-weight: 600;
 }
 
-/* SAVE BUTTON */
 .save {
     background: #22c55e;
     color: white;
@@ -132,16 +139,14 @@ input:focus, textarea:focus {
     background: #16a34a;
 }
 
-/* CANCEL LINK */
 .cancel {
     color: #94a3b8;
-    align-self: centre;
+    align-self: center;
 }
 
 .cancel:hover {
     color: white;
 }
-
 </style>
 
 {% endblock %}

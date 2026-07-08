@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from .models import Profile
+
 
 class AuthenticationFlowTests(TestCase):
     def setUp(self):
@@ -44,3 +46,28 @@ class AuthenticationFlowTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Create Account')
+
+    def test_profile_page_allows_updating_phone_and_address(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse('edit_profile'),
+            {
+                'first_name': 'Test',
+                'last_name': 'User',
+                'email': 'updated@example.com',
+                'phone_number': '1234567890',
+                'address': '123 Main Street',
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'Test')
+        self.assertEqual(self.user.last_name, 'User')
+        self.assertEqual(self.user.email, 'updated@example.com')
+
+        profile = Profile.objects.get(user=self.user)
+        self.assertEqual(profile.phone_number, '1234567890')
+        self.assertEqual(profile.address, '123 Main Street')
