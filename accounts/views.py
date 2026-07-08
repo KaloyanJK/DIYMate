@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import LoginForm, ProfileForm, RegisterForm
-from .models import Profile, Subscription
+from .models import LoginEvent, Profile, Subscription
 from .services import (
     get_free_ai_limit,
     get_or_create_subscription,
@@ -27,6 +27,31 @@ def home_view(request):
     return render(request, 'home.html')
 
 
+def _get_request_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR')
+
+
+def _record_login_event(request, identifier, user, success):
+    profile = None
+    if user:
+        profile = Profile.objects.filter(user=user).first()
+
+    LoginEvent.objects.create(
+        user=user,
+        attempted_identifier=identifier,
+        result=LoginEvent.RESULT_SUCCESS if success else LoginEvent.RESULT_FAILED,
+        success=success,
+        ip_address=_get_request_ip(request),
+        full_name_snapshot=(user.get_full_name().strip() if user else ''),
+        email_snapshot=(user.email if user else ''),
+        phone_number_snapshot=(profile.phone_number if profile else ''),
+        address_snapshot=(profile.address if profile else ''),
+    )
+
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -36,6 +61,7 @@ def login_view(request):
             user = User.objects.filter(Q(username=identifier) | Q(email__iexact=identifier)).first()
 
             if user is not None and user.check_password(password):
+                _record_login_event(request, identifier, user, True)
                 user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
                 if form.cleaned_data['remember']:
@@ -44,7 +70,10 @@ def login_view(request):
                     request.session.set_expiry(0)
                 return redirect('profile')
 
+            _record_login_event(request, identifier, user, False)
             form.add_error(None, 'Invalid username/email or password.')
+        else:
+            _record_login_event(request, request.POST.get('login', '').strip(), None, False)
     else:
         form = LoginForm()
 

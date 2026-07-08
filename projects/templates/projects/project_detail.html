@@ -40,9 +40,9 @@
     <!-- ACTION BUTTONS -->
     <div class="actions">
 
-        <a href="{% url 'generate_plan' project.id %}" class="btn primary">
+        {% comment %} <a href="{% url 'generate_plan' project.id %}" class="btn primary">
             Generate AI Plan
-        </a>
+        </a> {% endcomment %}
 
         <a href="{% url 'edit_project' project.id %}" class="btn warning">
             Edit

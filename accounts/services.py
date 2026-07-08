@@ -24,7 +24,7 @@ def consume_ai_generation_credit(user):
     """
     subscription = get_or_create_subscription(user)
 
-    if subscription.plan == Subscription.PLAN_PREMIUM and subscription.is_active:
+    if subscription.plan == Subscription.PLAN_PREMIUM:
         return True, subscription, ''
 
     free_limit = get_free_ai_limit()

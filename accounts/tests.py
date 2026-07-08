@@ -6,7 +6,8 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from .models import Profile
+from .models import LoginEvent, Profile, Subscription
+from .services import consume_ai_generation_credit
 
 
 class AuthenticationFlowTests(TestCase):
@@ -22,7 +23,11 @@ class AuthenticationFlowTests(TestCase):
             reverse('account_signup'),
             {
                 'username': 'newuser',
+                'first_name': 'New',
+                'last_name': 'User',
                 'email': 'newuser@example.com',
+                'phone_number': '1234567890',
+                'address': '10 New Street',
                 'password1': 'StrongPass123!',
                 'password2': 'StrongPass123!',
             },
@@ -31,6 +36,14 @@ class AuthenticationFlowTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(get_user_model().objects.filter(username='newuser').exists())
+
+        user = get_user_model().objects.get(username='newuser')
+        self.assertEqual(user.first_name, 'New')
+        self.assertEqual(user.last_name, 'User')
+
+        profile = Profile.objects.get(user=user)
+        self.assertEqual(profile.phone_number, '1234567890')
+        self.assertEqual(profile.address, '10 New Street')
 
     def test_user_can_log_in_with_username_and_password(self):
         response = self.client.post(
@@ -44,6 +57,32 @@ class AuthenticationFlowTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.wsgi_request.user.is_authenticated)
+
+        event = LoginEvent.objects.first()
+        self.assertIsNotNone(event)
+        self.assertTrue(event.success)
+        self.assertEqual(event.result, LoginEvent.RESULT_SUCCESS)
+        self.assertEqual(event.attempted_identifier, 'tester')
+        self.assertEqual(event.user, self.user)
+
+    def test_failed_log_in_creates_login_event(self):
+        response = self.client.post(
+            reverse('account_login'),
+            {
+                'login': 'tester',
+                'password': 'wrong-password',
+            },
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.wsgi_request.user.is_authenticated)
+
+        event = LoginEvent.objects.first()
+        self.assertIsNotNone(event)
+        self.assertFalse(event.success)
+        self.assertEqual(event.result, LoginEvent.RESULT_FAILED)
+        self.assertEqual(event.attempted_identifier, 'tester')
 
     def test_signup_page_renders_without_social_apps(self):
         response = self.client.get(reverse('account_signup'))
@@ -122,3 +161,29 @@ class BillingCheckoutTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('profile'))
         mock_create.assert_not_called()
+
+
+class SubscriptionAdminControlTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='premiumadmin',
+            email='premiumadmin@example.com',
+            password='StrongPass123!',
+        )
+
+    def test_setting_plan_to_premium_marks_subscription_active(self):
+        subscription = Subscription.objects.create(user=self.user)
+        subscription.plan = Subscription.PLAN_PREMIUM
+        subscription.save()
+
+        subscription.refresh_from_db()
+        self.assertTrue(subscription.is_active)
+
+    def test_premium_plan_gets_unlimited_ai_usage(self):
+        subscription = Subscription.objects.create(user=self.user, plan=Subscription.PLAN_PREMIUM)
+        subscription.ai_usage_count = 999
+        subscription.save()
+
+        allowed, _subscription, message = consume_ai_generation_credit(self.user)
+        self.assertTrue(allowed)
+        self.assertEqual(message, '')

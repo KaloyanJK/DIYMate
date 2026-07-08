@@ -12,11 +12,24 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(UserCreationForm):
+    first_name = forms.CharField(required=True, max_length=30, label="First name")
+    last_name = forms.CharField(required=True, max_length=30, label="Last name")
     email = forms.EmailField(required=True)
+    phone_number = forms.CharField(required=True, max_length=20, label="Phone number")
+    address = forms.CharField(required=True, max_length=255, label="Address")
 
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2"]
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+            "address",
+            "password1",
+            "password2",
+        ]
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -25,6 +38,23 @@ class RegisterForm(UserCreationForm):
             raise forms.ValidationError("An account with that email already exists.")
 
         return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data.get('first_name', '').strip()
+        user.last_name = self.cleaned_data.get('last_name', '').strip()
+
+        if commit:
+            user.save()
+            Profile.objects.update_or_create(
+                user=user,
+                defaults={
+                    'phone_number': self.cleaned_data.get('phone_number', ''),
+                    'address': self.cleaned_data.get('address', ''),
+                },
+            )
+
+        return user
 
 
 class ProfileForm(forms.ModelForm):
