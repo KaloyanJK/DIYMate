@@ -1,8 +1,10 @@
 import os
 from openai import OpenAI
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from projects.models import Project
+from accounts.services import consume_ai_generation_credit
 from .ai_instructions import AI_SYSTEM_INSTRUCTIONS, AI_USER_RULES
 from .models import AIPlan
 
@@ -12,6 +14,11 @@ client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 @login_required
 def generate_plan(request, project_id):
     project = get_object_or_404(Project, id=project_id, user=request.user)
+
+    allowed, _, usage_message = consume_ai_generation_credit(request.user)
+    if not allowed:
+        messages.error(request, usage_message)
+        return redirect('project_detail', pk=project.id)
 
     # PROMPT (VERY IMPORTANT)
     prompt = f"""
@@ -67,4 +74,5 @@ def generate_plan(request, project_id):
     except Exception as e:
         print("AI parsing failed:", e)
 
+    messages.success(request, 'AI plan generated successfully.')
     return redirect("project_detail", pk=project.id)

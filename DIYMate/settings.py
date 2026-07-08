@@ -198,3 +198,13 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
     },
 }
+
+
+# Billing and usage limits
+FREE_AI_USAGE_LIMIT = int(os.environ.get('FREE_AI_USAGE_LIMIT'))
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
+STRIPE_PRICE_ID_PREMIUM = os.environ.get('STRIPE_PRICE_ID_PREMIUM')
+STRIPE_CURRENCY = os.environ.get('STRIPE_CURRENCY', 'gbp')
+STRIPE_PREMIUM_INTERVAL = os.environ.get('STRIPE_PREMIUM_INTERVAL', 'month')

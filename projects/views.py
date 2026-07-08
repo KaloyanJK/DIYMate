@@ -3,10 +3,12 @@ import os
 import re
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from openai import OpenAI
 
+from accounts.services import consume_ai_generation_credit
 from planner.ai_instructions import AI_SYSTEM_INSTRUCTIONS, AI_USER_RULES
 from planner.models import AIPlan
 from .forms import ProjectForm
@@ -49,6 +51,11 @@ def create_project(request):
             project.user = request.user
             project.save()
 
+            allowed, _, usage_message = consume_ai_generation_credit(request.user)
+            if not allowed:
+                messages.warning(request, usage_message)
+                return redirect('project_detail', pk=project.id)
+
             prompt = f"""
             {AI_SYSTEM_INSTRUCTIONS}
 
@@ -84,8 +91,10 @@ def create_project(request):
             try:
                 data = json.loads(output)
                 save_ai_plan(project, data)
+                messages.success(request, 'Project created and AI plan generated.')
             except Exception as e:
                 print("AI parsing failed:", e)
+                messages.warning(request, 'Project was created but AI plan parsing failed.')
 
             return redirect('project_detail', pk=project.id)
     else:
@@ -129,6 +138,11 @@ def edit_project(request, pk):
         if form.is_valid():
             project = form.save()
 
+            allowed, _, usage_message = consume_ai_generation_credit(request.user)
+            if not allowed:
+                messages.warning(request, usage_message)
+                return redirect('project_detail', pk=project.id)
+
             prompt = f"""
             {AI_SYSTEM_INSTRUCTIONS}
 
@@ -164,8 +178,10 @@ def edit_project(request, pk):
             try:
                 data = json.loads(output)
                 save_ai_plan(project, data)
+                messages.success(request, 'Project updated and AI plan regenerated.')
             except Exception as e:
                 print("AI parsing failed:", e)
+                messages.warning(request, 'Project was updated but AI plan parsing failed.')
 
             return redirect('project_detail', pk=project.id)
     else:

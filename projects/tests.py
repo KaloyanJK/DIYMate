@@ -1,9 +1,11 @@
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from accounts.models import Subscription
 from planner.models import AIPlan
 from .models import Project
 
@@ -140,6 +142,40 @@ class ProjectDetailTests(TestCase):
         self.assertEqual(response.status_code, 302)
         plan = AIPlan.objects.get(project=project)
         self.assertEqual(plan.steps, ['Measure the area', 'Cut the boards'])
+
+    def test_free_user_at_limit_cannot_generate_plan(self):
+        Subscription.objects.create(
+            user=self.user,
+            plan=Subscription.PLAN_FREE,
+            is_active=False,
+            ai_usage_count=settings.FREE_AI_USAGE_LIMIT,
+        )
+
+        self.client.force_login(self.user)
+        with patch('planner.views.client.chat.completions.create') as mocked_create:
+            response = self.client.get(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('project_detail', kwargs={'pk': self.project.pk}))
+        mocked_create.assert_not_called()
+
+    def test_premium_user_has_unlimited_generate_plan_access(self):
+        Subscription.objects.create(
+            user=self.user,
+            plan=Subscription.PLAN_PREMIUM,
+            is_active=True,
+            ai_usage_count=10_000,
+        )
+        fake_response = type('Response', (), {
+            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["Premium boards"], "steps": ["Do premium step"], "cost": 55, "safety": "Premium safety"}'})()})()]
+        })()
+
+        self.client.force_login(self.user)
+        with patch('planner.views.client.chat.completions.create', return_value=fake_response):
+            response = self.client.get(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(AIPlan.objects.filter(project=self.project).exists())
 
 
 class ProjectListTests(TestCase):

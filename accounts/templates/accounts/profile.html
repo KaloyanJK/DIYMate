@@ -18,6 +18,24 @@
             <span><strong>Last Name:</strong> {{ request.user.last_name|default:"Not set" }}</span>
             <span><strong>Phone Number:</strong> {{ profile.phone_number|default:"Not set" }}</span>
             <span><strong>Address:</strong> {{ profile.address|default:"Not set" }}</span>
+            <span><strong>Plan:</strong> {{ subscription.get_plan_display }}</span>
+            <span><strong>Premium Status:</strong> {% if subscription.is_active %}Active{% else %}Inactive{% endif %}</span>
+            <span><strong>Free AI Limit:</strong> {{ free_ai_limit }}</span>
+            <span><strong>Free AI Remaining:</strong> {{ remaining_free_generations }}</span>
+            {% if subscription.renew_date %}
+            <span><strong>Renews:</strong> {{ subscription.renew_date|date:"d M Y H:i" }}</span>
+            {% endif %}
+        </div>
+
+        <div class="billing-actions">
+            <form action="{% url 'start_checkout_session' %}" method="post">
+                {% csrf_token %}
+                <button class="btn premium" type="submit">Upgrade To Premium</button>
+            </form>
+            <form action="{% url 'billing_portal' %}" method="post">
+                {% csrf_token %}
+                <button class="btn secondary" type="submit">Manage Subscription</button>
+            </form>
         </div>
 
         <div class="actions">
@@ -104,6 +122,17 @@
     gap: 10px;
 }
 
+.billing-actions {
+    width: 100%;
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.billing-actions form {
+    margin: 0;
+}
+
 .btn {
     display: block;
     padding: 12px 14px;
@@ -123,6 +152,17 @@
 
 .btn.primary:hover {
     background: #2563eb;
+}
+
+.btn.premium {
+    background: #10b981;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn.premium:hover {
+    background: #059669;
 }
 
 .btn.secondary {
