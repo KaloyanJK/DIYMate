@@ -35,7 +35,7 @@
 
             <form action="{% url 'start_checkout_session' %}" method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn premium btn-block">Upgrade to Premium</button>
+                <button type="submit" class="btn premium">Upgrade to Premium</button>
             </form>
         </section>
     </div>
@@ -63,7 +63,7 @@
 
         <form action="{% url 'billing_portal' %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn premium btn-block">Manage in Stripe Portal</button>
+            <button type="submit" class="btn premium">Manage in Stripe Portal</button>
         </form>
     </section>
 </div>

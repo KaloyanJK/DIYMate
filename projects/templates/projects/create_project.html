@@ -9,7 +9,10 @@
         <form method="POST" class="styled-form">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn primary btn-block">Create & Generate</button>
+            <div class="btn-group">
+                <button type="submit" class="btn primary">Create & Generate</button>
+                <a href="{% url 'project_list' %}" class="btn ghost">Cancel</a>
+            </div>
         </form>
     </div>
 </div>

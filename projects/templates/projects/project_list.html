@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<section class="page-shell">
+<div class="card project-page-card">
 <section class="projects-list-page">
 
 <div class="header">
@@ -38,9 +40,11 @@
     </div>
 
     {% empty %}
-        <p>No projects yet. Start building something </p>
+        <p>No projects yet. Start building something.</p>
     {% endfor %}
 
+</div>
+</section>
 </div>
 </section>
 

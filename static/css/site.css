@@ -8,6 +8,11 @@
     --text-muted: #cbd5e1;
     --text-soft: #94a3b8;
 
+    /* Content text palette (separate from navbar/footer text). */
+    --text-content-main: #f8fafc;
+    --text-content-muted: #cbd5e1;
+    --text-content-soft: #94a3b8;
+
     --bg-navy: rgba(15, 23, 42, 0.82);
     --bg-slate: rgba(30, 41, 59, 0.72);
     --bg-panel: rgba(15, 23, 42, 0.7);
@@ -18,6 +23,37 @@
     --logo-color: #93c5fd;
     --nav-link-color: #cbd5f5;
     --nav-link-hover: #7dd3fc;
+    --footer-text-color: #94a3b8;
+
+    --form-label-color: #cbd5f5;
+    --field-bg: rgba(15, 23, 42, 0.62);
+    --field-text: #f8fafc;
+    --field-border: rgba(255, 255, 255, 0.16);
+    --field-focus-outline: rgba(59, 130, 246, 0.72);
+    --content-divider: rgba(148, 163, 184, 0.4);
+
+    --content-accent: #93c5fd;
+    --content-accent-strong: #bfdbfe;
+    --content-emphasis: #e2e8f0;
+
+    /* Elevated surface colors for hero + billing sections. */
+    --hero-surface-bg: rgba(30, 41, 59, 0.7);
+    --hero-surface-border: rgba(125, 211, 252, 0.32);
+
+    --billing-hero-accent-a: rgba(16, 185, 129, 0.3);
+    --billing-hero-accent-b: rgba(59, 130, 246, 0.32);
+    --billing-hero-base-top: rgba(30, 41, 59, 0.86);
+    --billing-hero-base-bottom: rgba(15, 23, 42, 0.72);
+    --billing-hero-border: rgba(148, 163, 184, 0.3);
+
+    --billing-card-bg: rgba(30, 41, 59, 0.72);
+    --billing-card-border: rgba(148, 163, 184, 0.25);
+    --billing-free-top: rgba(51, 65, 85, 0.84);
+    --billing-free-bottom: rgba(30, 41, 59, 0.66);
+    --billing-premium-top: rgba(13, 73, 59, 0.8);
+    --billing-premium-bottom: rgba(22, 40, 66, 0.72);
+    --billing-summary-bg: rgba(30, 41, 59, 0.74);
+    --billing-fact-bg: rgba(51, 65, 85, 0.72);
 
     --border-soft: rgba(148, 163, 184, 0.25);
     --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.2);
@@ -45,6 +81,10 @@ body.light-mode {
     --text-muted: #334155;
     --text-soft: #475569;
 
+    --text-content-main: #0f172a;
+    --text-content-muted: #334155;
+    --text-content-soft: #475569;
+
     --bg-panel: rgba(248, 250, 252, 0.92);
     --bg-navbar: rgba(248, 250, 252, 0.93);
     --bg-footer: rgba(226, 232, 240, 0.94);
@@ -53,7 +93,37 @@ body.light-mode {
     --logo-color: #1d4ed8;
     --nav-link-color: #1e293b;
     --nav-link-hover: #1d4ed8;
+    --footer-text-color: #1e293b;
+
+    --form-label-color: #334155;
+    --field-bg: rgba(255, 255, 255, 0.92);
+    --field-text: #0f172a;
+    --field-border: rgba(15, 23, 42, 0.2);
+    --field-focus-outline: rgba(37, 99, 235, 0.4);
+    --content-divider: rgba(100, 116, 139, 0.45);
+
+    --content-accent: #1d4ed8;
+    --content-accent-strong: #1e40af;
+    --content-emphasis: #1e293b;
     --border-soft: rgba(15, 23, 42, 0.2);
+
+    --hero-surface-bg: rgba(255, 255, 255, 0.84);
+    --hero-surface-border: rgba(59, 130, 246, 0.36);
+
+    --billing-hero-accent-a: rgba(16, 185, 129, 0.2);
+    --billing-hero-accent-b: rgba(59, 130, 246, 0.22);
+    --billing-hero-base-top: rgba(255, 255, 255, 0.9);
+    --billing-hero-base-bottom: rgba(241, 245, 249, 0.88);
+    --billing-hero-border: rgba(59, 130, 246, 0.3);
+
+    --billing-card-bg: rgba(255, 255, 255, 0.9);
+    --billing-card-border: rgba(100, 116, 139, 0.3);
+    --billing-free-top: rgba(248, 250, 252, 0.95);
+    --billing-free-bottom: rgba(241, 245, 249, 0.9);
+    --billing-premium-top: rgba(220, 252, 231, 0.9);
+    --billing-premium-bottom: rgba(224, 242, 254, 0.9);
+    --billing-summary-bg: rgba(248, 250, 252, 0.92);
+    --billing-fact-bg: rgba(241, 245, 249, 0.92);
 }
 
 * {
@@ -152,6 +222,7 @@ h5 {
 }
 
 .content {
+    color: var(--text-content-main);
     padding: 40px;
     min-height: 80vh;
 }
@@ -160,7 +231,7 @@ h5 {
     text-align: center;
     padding: 20px;
     background: var(--bg-footer);
-    color: var(--text-soft);
+    color: var(--footer-text-color);
     font-size: 14px;
     border-top: 1px solid var(--border-soft);
     position: sticky;
@@ -297,10 +368,6 @@ button.btn:hover {
     background: rgba(15, 23, 42, 0.34);
 }
 
-.btn-block {
-    width: 100%;
-}
-
 .btn-sm {
     padding: 7px 12px;
     font-size: 13px;
@@ -319,8 +386,8 @@ button.btn:hover {
 
 .hero-card {
     width: min(100%, 620px);
-    background: rgba(15, 23, 42, 0.56);
-    border: 1px solid rgba(125, 211, 252, 0.25);
+    background: var(--hero-surface-bg);
+    border: 1px solid var(--hero-surface-border);
     border-radius: 22px;
     backdrop-filter: blur(8px);
     box-shadow: var(--shadow-strong);
@@ -514,7 +581,7 @@ button.btn:hover {
 .page-shell,
 .form-container,
 .profile-container {
-    color: #111827;
+    color: var(--text-content-main);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -549,7 +616,7 @@ button.btn:hover {
     text-align: center;
 }
 .profile-card p {
-    color: #111827;
+    color: var(--text-content-main);
 }
 
 .form-card {
@@ -572,7 +639,7 @@ button.btn:hover {
 .form-container label {
     display: block;
     font-size: 14px;
-    color: #cbd5f5;
+    color: var(--form-label-color);
     margin-bottom: 6px;
     font-weight: 600;
 }
@@ -587,9 +654,9 @@ button.btn:hover {
     width: 100%;
     padding: 10px 12px;
     border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(15, 23, 42, 0.62);
-    color: #fff;
+    border: 1px solid var(--field-border);
+    background: var(--field-bg);
+    color: var(--field-text);
 }
 
 .styled-form textarea,
@@ -606,7 +673,7 @@ button.btn:hover {
 .profile-form textarea:focus,
 .form-container input:focus,
 .form-container textarea:focus {
-    outline: 2px solid rgba(59, 130, 246, 0.72);
+    outline: 2px solid var(--field-focus-outline);
     outline-offset: 1px;
 }
 
@@ -683,13 +750,13 @@ button.btn:hover {
     justify-content: space-between;
     gap: 12px;
     font-size: 14px;
-    color: #111827;
+    color: var(--text-content-main);
     padding: 10px 0;
-    border-bottom: 1px solid rgba(94, 90, 90, 0.9);
+    border-bottom: 1px solid var(--content-divider);
 }
 
 .user-info strong {
-    color: #111827;
+    color: var(--text-content-main);
 }
 
 /* Edit profile form grid */
@@ -721,10 +788,10 @@ button.btn:hover {
     border-radius: 18px;
     margin-bottom: 20px;
     background:
-        radial-gradient(1400px 500px at 15% -20%, rgba(16, 185, 129, 0.26), transparent 60%),
-        radial-gradient(1100px 500px at 95% 0%, rgba(59, 130, 246, 0.3), transparent 55%),
-        linear-gradient(160deg, rgba(15, 23, 42, 0.86), rgba(15, 23, 42, 0.64));
-    border: 1px solid rgba(148, 163, 184, 0.22);
+        radial-gradient(1400px 500px at 15% -20%, var(--billing-hero-accent-a), transparent 60%),
+        radial-gradient(1100px 500px at 95% 0%, var(--billing-hero-accent-b), transparent 55%),
+        linear-gradient(160deg, var(--billing-hero-base-top), var(--billing-hero-base-bottom));
+    border: 1px solid var(--billing-hero-border);
 }
 
 .eyebrow {
@@ -749,8 +816,8 @@ button.btn:hover {
 .plan-card {
     border-radius: var(--radius-md);
     padding: 24px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid var(--billing-card-border);
+    background: var(--billing-card-bg);
     position: relative;
 }
 
@@ -780,7 +847,7 @@ button.btn:hover {
 }
 
 .plan-card li {
-    color: #dbeafe;
+    color: var(--content-emphasis);
     padding-left: 20px;
     position: relative;
 }
@@ -797,12 +864,12 @@ button.btn:hover {
 }
 
 .plan-card.free {
-    background: linear-gradient(160deg, rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.55));
+    background: linear-gradient(160deg, var(--billing-free-top), var(--billing-free-bottom));
 }
 
 .plan-card.premium {
-    border-color: rgba(16, 185, 129, 0.42);
-    background: linear-gradient(160deg, rgba(6, 78, 59, 0.75), rgba(15, 23, 42, 0.72));
+    border-color: var(--billing-card-border);
+    background: linear-gradient(160deg, var(--billing-premium-top), var(--billing-premium-bottom));
 }
 
 .tag {
@@ -820,7 +887,7 @@ button.btn:hover {
 .status,
 .hint {
     margin-top: 14px;
-    color: #bfdbfe;
+    color: var(--content-accent-strong);
     font-size: 14px;
 }
 
@@ -828,12 +895,16 @@ button.btn:hover {
     margin-top: 16px;
 }
 
+.billing-wrap form {
+    display: inline-block;
+}
+
 .account-billing {
     margin-top: 18px;
     border-radius: var(--radius-md);
     padding: 22px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid var(--billing-card-border);
+    background: var(--billing-summary-bg);
 }
 
 .account-billing h3 {
@@ -849,8 +920,8 @@ button.btn:hover {
 .facts div {
     padding: 12px;
     border-radius: var(--radius-sm);
-    background: rgba(30, 41, 59, 0.7);
-    border: 1px solid rgba(148, 163, 184, 0.15);
+    background: var(--billing-fact-bg);
+    border: 1px solid var(--billing-card-border);
 }
 
 .facts span {
@@ -867,11 +938,13 @@ button.btn:hover {
 }
 
 /* Projects list */
-.projects-list-page{
+.project-page-card {
+    width: min(100%, 1080px);
+}
+
+.projects-list-page {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-
 }
 
 .projects-list-page .header {
@@ -916,7 +989,7 @@ button.btn:hover {
 }
 
 .project-card p {
-    color: #cbd5f5;
+    color: var(--text-content-muted);
     font-size: 14px;
     margin: 0 0 14px;
 }
@@ -933,13 +1006,13 @@ button.btn:hover {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #93c5fd;
+    color: var(--content-accent);
     margin-bottom: 4px;
 }
 
 .plan-materials {
     font-size: 13px;
-    color: #e2e8f0;
+    color: var(--content-emphasis);
 }
 
 .projects-list-page .btn-group {
@@ -955,8 +1028,7 @@ button.btn:hover {
 
 /* Project detail */
 .project-detail-page .container {
-    max-width: 980px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .project-nav {
@@ -972,17 +1044,17 @@ button.btn:hover {
 }
 
 .nav-link {
-    color: #93c5fd;
+    color: var(--content-accent);
     text-decoration: none;
     font-size: 14px;
 }
 
 .nav-link:hover {
-    color: #dbeafe;
+    color: var(--content-accent-strong);
 }
 
 .nav-link.disabled {
-    color: #64748b;
+    color: var(--text-content-soft);
     pointer-events: none;
 }
 
@@ -1052,7 +1124,7 @@ button.btn:hover {
 }
 
 .plans-table td {
-    color: #e2e8f0;
+    color: var(--text-content-main);
 }
 
 .project-detail-page ul,
@@ -1071,7 +1143,7 @@ button.btn:hover {
 
 .timestamp {
     font-size: 12px;
-    color: #94a3b8;
+    color: var(--text-content-soft);
     display: block;
     margin-top: 4px;
 }
