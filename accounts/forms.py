@@ -1,12 +1,12 @@
-# Uses Django’s built-in secure user system
-# Automatically:
-#     Hashes passwords
-#     Validates passwords
-#     Prevents weak passwords
-
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+
+class LoginForm(forms.Form):
+    login = forms.CharField(label="Username or email", max_length=254)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput)
+    remember = forms.BooleanField(label="Remember me", required=False)
 
 
 class RegisterForm(UserCreationForm):
@@ -17,10 +17,9 @@ class RegisterForm(UserCreationForm):
         fields = ["username", "email", "password1", "password2"]
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get("email")
 
-        # Check if email already exists
-        if User.objects.filter(email__iexact=email).exists():
-            raise forms.ValidationError("Email already exists")
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("An account with that email already exists.")
 
         return email

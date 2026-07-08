@@ -119,6 +119,12 @@
         <form method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
 
+            {% if form.non_field_errors %}
+            <div class="errorlist">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
             <div class="form-group">
                 {{ form.login.label_tag }}
                 {{ form.login }}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load socialaccount %}
 
 {% block content %}
 
@@ -142,7 +143,30 @@
             <button type="submit" class="btn-primary">
                 Create Account
             </button>
-        </form>
+
+            </form>
+
+            {% if configured_providers %}
+            <div style="text-align:center; margin:20px 0; color:#999;">
+                OR
+            </div>
+            {% endif %}
+
+            {% if 'google' in configured_providers %}
+            <a href="{% provider_login_url 'google' %}" 
+            class="btn-primary"
+            style="display:block; text-align:center; text-decoration:none; background:#fff; color:#333; border:1px solid #ddd;">
+                Continue with Google
+            </a>
+            {% endif %}
+
+            {% if 'github' in configured_providers %}
+            <a href="{% provider_login_url 'github' %}" 
+            class="btn-primary"
+            style="display:block; text-align:center; text-decoration:none; background:#24292f; margin-top:10px;">
+                Continue with GitHub
+            </a>
+            {% endif %}
 
         <div class="auth-footer">
             Already have an account?
