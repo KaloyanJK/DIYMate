@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<section class="projects-list-page">
 
 <div class="header">
     <h2>My Projects</h2>
 
-    <a href="{% url 'create_project' %}" class="create-btn">+ New Project</a>
+    <a href="{% url 'create_project' %}" class="btn primary">+ New Project</a>
 </div>
 
 
@@ -30,131 +31,17 @@
         {% endwith %}
 
         <div class="btn-group">
-            <a href="{% url 'project_detail' project.id %}" class="view">View</a>
-            <a href="{% url 'edit_project' project.id %}" class="edit">Edit</a>
-            <a href="{% url 'delete_project' project.id %}" class="delete">Delete</a>
+            <a href="{% url 'project_detail' project.id %}" class="btn success btn-sm">View</a>
+            <a href="{% url 'edit_project' project.id %}" class="btn warning btn-sm">Edit</a>
+            <a href="{% url 'delete_project' project.id %}" class="btn danger btn-sm">Delete</a>
         </div>
     </div>
 
     {% empty %}
-        <p>No projects yet. Start building something 🚀</p>
+        <p>No projects yet. Start building something </p>
     {% endfor %}
 
 </div>
-
-
-<style>
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.header h2 {
-    margin: 0;
-    font-size: 24px;
-}
-
-.create-btn {
-    background: #3b82f6;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 10px;
-    text-decoration: none;
-    transition: 0.3s;
-    font-weight: 600;
-}
-
-.create-btn:hover {
-    background: #2563eb;
-}
-
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.project-card {
-    background: rgba(255, 255, 255, 0.06);
-    padding: 20px;
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    transition: 0.3s ease;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
-}
-
-.project-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
-}
-
-.project-card h3 {
-    margin: 0 0 10px;
-}
-
-.project-card p {
-    color: #cbd5f5;
-    font-size: 14px;
-    margin: 0 0 14px;
-}
-
-.plan-preview {
-    margin-top: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: rgba(59, 130, 246, 0.15);
-    border: 1px solid rgba(59, 130, 246, 0.25);
-}
-
-.plan-label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #93c5fd;
-    margin-bottom: 4px;
-}
-
-.plan-materials {
-    font-size: 13px;
-    color: #e2e8f0;
-}
-
-.btn-group {
-    margin-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.btn-group a {
-    text-decoration: none;
-    padding: 7px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.view {
-    background: #22c55e;
-    color: white;
-}
-
-.edit {
-    background: #f59e0b;
-    color: white;
-}
-
-.delete {
-    background: #ef4444;
-    color: white;
-}
-
-.btn-group a:hover {
-    opacity: 0.9;
-}
-</style>
+</section>
 
 {% endblock %}

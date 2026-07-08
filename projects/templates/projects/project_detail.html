@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<section class="project-detail-page">
 
 <div class="container">
 
@@ -41,11 +42,11 @@
             Generate AI Plan
         </a>
 
-        <a href="{% url 'edit_project' project.id %}" class="btn edit">
+        <a href="{% url 'edit_project' project.id %}" class="btn warning">
             Edit
         </a>
 
-        <a href="{% url 'delete_project' project.id %}" class="btn delete">
+        <a href="{% url 'delete_project' project.id %}" class="btn danger">
             Delete
         </a>
 
@@ -110,167 +111,6 @@
     {% endif %}
 
 </div>
-
-<!-- ✅ STYLING -->
-
-<style>
-.container {
-    max-width: 980px;
-    margin: 0 auto;
-}
-
-.project-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding: 12px 16px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
-}
-
-.nav-link {
-    color: #93c5fd;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.nav-link:hover {
-    color: #dbeafe;
-}
-
-.nav-link.disabled {
-    color: #64748b;
-    pointer-events: none;
-}
-
-.project-header h1 {
-    margin: 0 0 6px;
-    font-size: 28px;
-}
-
-.meta {
-    color: #94a3b8;
-    margin: 0 0 18px;
-}
-
-.project-card,
-.instructions-card,
-.empty-state {
-    background: rgba(255, 255, 255, 0.06);
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
-}
-
-.project-card {
-    margin: 18px 0 24px;
-}
-
-.actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 28px;
-}
-
-.btn {
-    text-decoration: none;
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    transition: 0.3s ease;
-    display: inline-block;
-}
-
-.btn.primary {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn.primary:hover {
-    background: #2563eb;
-}
-
-.btn.edit {
-    background: #f59e0b;
-    color: white;
-}
-
-.btn.edit:hover {
-    background: #d97706;
-}
-
-.btn.delete {
-    background: #ef4444;
-    color: white;
-}
-
-.btn.delete:hover {
-    background: #dc2626;
-}
-
-.section-title {
-    margin: 0 0 16px;
-}
-
-.table-wrapper {
-    overflow-x: auto;
-    margin-bottom: 24px;
-}
-
-.plans-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.plans-table th,
-.plans-table td {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 14px;
-    vertical-align: top;
-}
-
-.plans-table th {
-    background: rgba(59, 130, 246, 0.18);
-    text-align: left;
-}
-
-.plans-table td {
-    color: #e2e8f0;
-}
-
-ul,
-ol {
-    padding-left: 20px;
-    margin: 0;
-}
-
-.instructions-section {
-    margin-top: 24px;
-}
-
-.instructions-card {
-    margin-bottom: 12px;
-}
-
-.timestamp {
-    font-size: 12px;
-    color: #64748b;
-    display: block;
-    margin-top: 4px;
-}
-
-.empty-state {
-    text-align: center;
-    color: #94a3b8;
-}
-</style>
+</section>
 
 {% endblock %}

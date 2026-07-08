@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<section class="delete-project-page">
 
 <div class="delete-box">
     <h2>Delete Project</h2>
@@ -11,55 +12,11 @@
     <form method="POST">
         {% csrf_token %}
         <div class="actions">
-            <button class="delete-btn" type="submit">Yes, Delete</button>
-            <a href="{% url 'project_detail' project.id %}" class="cancel-link">Cancel</a>
+            <button class="btn danger" type="submit">Yes, Delete</button>
+            <a href="{% url 'project_detail' project.id %}" class="btn ghost">Cancel</a>
         </div>
     </form>
 </div>
-
-<style>
-.delete-box {
-    max-width: 480px;
-    margin: 40px auto;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.06);
-    padding: 32px;
-    border-radius: 20px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
-}
-
-.delete-box h2 {
-    margin-top: 0;
-}
-
-.actions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-.delete-btn {
-    background: #ef4444;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.cancel-link {
-    color: #94a3b8;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.cancel-link:hover {
-    color: white;
-}
-</style>
+</section>
 
 {% endblock %}

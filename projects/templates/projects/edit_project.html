@@ -40,11 +40,11 @@
             <!-- BUTTONS -->
             <div class="btn-group">
     
-                <button type="submit" class="btn save">
+                <button type="submit" class="btn success">
                     Save Changes
                 </button>
 
-                <a href="{% url 'project_detail' project.id %}" class="btn cancel">
+                <a href="{% url 'project_detail' project.id %}" class="btn ghost">
                     Cancel
                 </a>
 
@@ -54,99 +54,5 @@
     </div>
 
 </div>
-
-<!-- ✅ STYLING -->
-
-<style>
-.form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    padding: 24px 16px;
-}
-
-.form-card {
-    width: min(100%, 620px);
-    background: rgba(255, 255, 255, 0.06);
-    padding: 32px;
-    border-radius: 20px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
-    box-sizing: border-box;
-}
-
-.form-card h2 {
-    margin: 0 0 20px;
-    font-size: 24px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: 14px;
-    color: #cbd5f5;
-    font-weight: 600;
-}
-
-input,
-textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(15, 23, 42, 0.6);
-    color: white;
-}
-
-textarea {
-    min-height: 110px;
-    resize: vertical;
-}
-
-input:focus,
-textarea:focus {
-    outline: 2px solid rgba(59, 130, 246, 0.7);
-    outline-offset: 1px;
-}
-
-.btn-group {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.btn {
-    padding: 10px 14px;
-    border-radius: 10px;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.save {
-    background: #22c55e;
-    color: white;
-}
-
-.save:hover {
-    background: #16a34a;
-}
-
-.cancel {
-    color: #94a3b8;
-    align-self: center;
-}
-
-.cancel:hover {
-    color: white;
-}
-</style>
 
 {% endblock %}
