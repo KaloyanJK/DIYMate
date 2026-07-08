@@ -18,6 +18,17 @@
 
         <p>{{ project.description|truncatewords:15 }}</p>
 
+        {% with latest_plan=project.plans.first %}
+        {% if latest_plan %}
+        <div class="plan-preview">
+            <div class="plan-label">Latest AI Plan</div>
+            <div class="plan-materials">
+                {{ latest_plan.materials|first }}{% if latest_plan.materials|length > 1 %} + {{ latest_plan.materials|length|add:"-1" }} more{% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <div class="btn-group">
             <a href="{% url 'project_detail' project.id %}" class="view">View</a>
             <a href="{% url 'edit_project' project.id %}" class="edit">Edit</a>
@@ -84,6 +95,28 @@
 .project-card p {
     color: #cbd5f5;
     font-size: 14px;
+}
+
+/* PLAN PREVIEW */
+.plan-preview {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.plan-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #93c5fd;
+    margin-bottom: 4px;
+}
+
+.plan-materials {
+    font-size: 13px;
+    color: #e2e8f0;
 }
 
 /* BUTTONS */

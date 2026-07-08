@@ -1,34 +1,103 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from projects.models import Project
-from .models import AIPlan
+import os
+from openai import OpenAI
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from projects.models import Project
+from .ai_instructions import AI_SYSTEM_INSTRUCTIONS, AI_USER_RULES
+from .models import AIPlan
+
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 
 @login_required
 def generate_plan(request, project_id):
     project = get_object_or_404(Project, id=project_id, user=request.user)
 
-    # FAKE AI RESPONSE
-    ai_result = {
-        "materials": ["Wood planks", "Screws", "Concrete"],
-        "steps": [
-            "Measure area",
-            "Prepare ground",
-            "Install base",
-            "Build frame",
-            "Attach boards"
-        ],
-        "cost": 850.00,
-        "safety": "Wear gloves and eye protection"
-    }
+    # PROMPT (VERY IMPORTANT)
+    prompt = f"""
+    {AI_SYSTEM_INSTRUCTIONS}
 
-    # SAVE PLAN
-    AIPlan.objects.create(
-        project=project,
-        materials=ai_result["materials"],
-        steps=ai_result["steps"],
-        cost=ai_result["cost"],
-        safety=ai_result["safety"]
+    {AI_USER_RULES}
+
+    Project:
+    Title: {project.title}
+    Description: {project.description}
+    Dimensions: {project.dimensions}
+    Budget: {project.budget}
+
+    Return ONLY structured JSON in this format:
+
+    {{
+        "materials": ["item1", "item2"],
+        "steps": ["step1", "step2", "step3"],
+        "cost": number,
+        "safety": "text"
+    }}
+    """
+
+    # CALL OPENAI
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": AI_SYSTEM_INSTRUCTIONS},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3   # reduces hallucination
     )
 
+    # GET RESPONSE TEXT
+    output = response.choices[0].message.content
+
+    import json
+
+    try:
+        data = json.loads(output)
+
+        AIPlan.objects.create(
+            project=project,
+            materials=data["materials"],
+            steps=data["steps"],
+            cost=data.get("cost", 0),
+            safety=data.get("safety", "")
+        )
+
+    except Exception as e:
+        print("AI parsing failed:", e)
+
     return redirect("project_detail", pk=project.id)
+
+
+# from django.shortcuts import render, get_object_or_404, redirect
+# from projects.models import Project
+# from .models import AIPlan
+# from django.contrib.auth.decorators import login_required
+
+
+# @login_required
+# def generate_plan(request, project_id):
+#     project = get_object_or_404(Project, id=project_id, user=request.user)
+
+#     # FAKE AI RESPONSE
+#     ai_result = {
+#         "materials": ["Wood planks", "Screws", "Concrete"],
+#         "steps": [
+#             "Measure area",
+#             "Prepare ground",
+#             "Install base",
+#             "Build frame",
+#             "Attach boards"
+#         ],
+#         "cost": 850.00,
+#         "safety": "Wear gloves and eye protection"
+#     }
+
+#     # SAVE PLAN
+#     AIPlan.objects.create(
+#         project=project,
+#         materials=ai_result["materials"],
+#         steps=ai_result["steps"],
+#         cost=ai_result["cost"],
+#         safety=ai_result["safety"]
+#     )
+
+#     return redirect("project_detail", pk=project.id)
