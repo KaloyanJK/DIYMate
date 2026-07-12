@@ -42,6 +42,7 @@
 
 (function () {
     var storageKey = 'diymate-theme';
+    var root = document.documentElement;
     var body = document.body;
     var toggle = document.getElementById('themeToggle');
     var icon = document.getElementById('themeIcon');
@@ -53,6 +54,7 @@
     function applyTheme(theme) {
         var isLight = theme === 'light';
         body.classList.toggle('light-mode', isLight);
+        root.setAttribute('data-bs-theme', isLight ? 'light' : 'dark');
         icon.textContent = isLight ? '☀' : '🌙';
         toggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
     }
