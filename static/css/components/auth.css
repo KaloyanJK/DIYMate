@@ -1,0 +1,198 @@
+/* Auth pages */
+.auth-wrapper {
+    --auth-card-bg: rgba(248, 250, 252, 0.94);
+    --auth-card-text: #0f172a;
+    --auth-subtitle: #475569;
+    --auth-label: #334155;
+    --auth-input-border: #cbd5e1;
+    --auth-input-focus: #2563eb;
+    --auth-input-focus-ring: rgba(37, 99, 235, 0.18);
+    --auth-button-bg: #2563eb;
+    --auth-button-bg-hover: #1d4ed8;
+    --auth-link: #1d4ed8;
+    --auth-error: #dc2626;
+
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+    background: var(--auth-card-bg);
+    color: var(--auth-card-text);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    box-shadow: var(--shadow-strong);
+}
+
+.auth-title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.auth-subtitle {
+    font-size: 14px;
+    color: var(--auth-subtitle);
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.auth-wrapper .form-group {
+    margin-bottom: 16px;
+}
+
+.auth-wrapper .form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    /* display: block; */
+    color: var(--auth-label);
+}
+
+.auth-wrapper .form-group input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--auth-input-border);
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-wrapper .form-group input:focus {
+    border-color: var(--auth-input-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--auth-input-focus-ring);
+}
+
+.auth-wrapper .btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: var(--auth-button-bg);
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.auth-wrapper .btn-primary:hover {
+    background: var(--auth-button-bg-hover);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--auth-subtitle);
+}
+
+.auth-footer a {
+    color: var(--auth-link);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.errorlist {
+    color: var(--auth-error);
+    font-size: 12px;
+    margin: 4px 0 0;
+    list-style: none;
+    padding: 0;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.remember-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.remember input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    border: 1.5px solid #94a3b8;
+    border-radius: 4px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.remember input[type="checkbox"]::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    transform: scale(0);
+    transition: transform 0.15s ease;
+    background: #fff;
+}
+
+.remember input[type="checkbox"]:checked {
+    border-color: var(--auth-input-focus);
+    background: var(--auth-input-focus);
+}
+
+.remember input[type="checkbox"]:checked::after {
+    transform: scale(1);
+}
+
+.remember input[type="checkbox"]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--auth-input-focus-ring);
+}
+
+.remember-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--auth-label);
+    line-height: 1;
+}
+
+.auth-divider {
+    text-align: center;
+    margin: 20px 0;
+    color: #64748b;
+}
+
+.social-btn {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.social-btn.google {
+    background: #fff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+}
+
+.social-btn.github {
+    background: #111827;
+    color: #fff;
+    margin-top: 10px;
+}

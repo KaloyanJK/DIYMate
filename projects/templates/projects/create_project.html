@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="page-shell">
-    <div class="form-card">
-        <h2>Create Project</h2>
-        <p class="subtitle">Create your project and generate its AI plan in one step.</p>
+<section class="page-shell" aria-labelledby="create-project-title">
+    <article class="form-card">
+        <h1 id="create-project-title">Create Project</h1>
+        <p class="subtitle">Create your project first, then generate an AI plan only when you need it.</p>
 
         <form method="POST" class="styled-form">
             {% csrf_token %}
             {{ form.as_p }}
             <div class="btn-group">
-                <button type="submit" class="btn primary">Create & Generate</button>
+                <button type="submit" class="btn primary">Create Project</button>
                 <a href="{% url 'project_list' %}" class="btn ghost">Cancel</a>
             </div>
         </form>
-    </div>
-</div>
+    </article>
+</section>
 {% endblock %}

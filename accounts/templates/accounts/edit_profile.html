@@ -2,31 +2,31 @@
 
 {% block content %}
 <div class="page-shell">
-    <div class="card">
-        <h2>Edit Profile</h2>
+    <article class="card" aria-labelledby="edit-profile-title">
+        <h1 id="edit-profile-title">Edit Profile</h1>
         <p class="subtitle">Update your details and save them here.</p>
 
         <form method="post" class="profile-form">
             {% csrf_token %}
             <div class="form-grid">
                 <div>
-                    <label for="id_first_name">First Name</label>
+                    <label class="field-label" for="id_first_name">First Name</label>
                     {{ form.first_name }}
                 </div>
                 <div>
-                    <label for="id_last_name">Last Name</label>
+                    <label class="field-label" for="id_last_name">Last Name</label>
                     {{ form.last_name }}
                 </div>
                 <div>
-                    <label for="id_email">Email</label>
+                    <label class="field-label" for="id_email">Email</label>
                     {{ form.email }}
                 </div>
                 <div>
-                    <label for="id_phone_number">Phone Number</label>
+                    <label class="field-label" for="id_phone_number">Phone Number</label>
                     {{ form.phone_number }}
                 </div>
                 <div class="full-width">
-                    <label for="id_address">Address</label>
+                    <label class="field-label" for="id_address">Address</label>
                     {{ form.address }}
                 </div>
             </div>
@@ -35,6 +35,6 @@
                 <a href="{% url 'profile' %}" class="btn secondary">Cancel</a>
             </div>
         </form>
-    </div>
+    </article>
 </div>
 {% endblock %}

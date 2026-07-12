@@ -2,15 +2,15 @@
 
 {% block content %}
 
-<div class="profile-container">
+<section class="profile-container" aria-labelledby="profile-title">
 
-    <div class="profile-card">
+    <article class="profile-card">
 
         <div class="avatar">
             {{ request.user.username|first|upper }}
         </div>
 
-        <h1>{{ request.user.username }}</h1>
+        <h1 id="profile-title">{{ request.user.username }}</h1>
         <p class="email">{{ request.user.email }}</p>
 
         <div class="user-info">
@@ -45,8 +45,8 @@
             <a href="{% url 'account_logout' %}" class="btn danger">Log Out</a>
         </div>
 
-    </div>
+    </article>
 
-</div>
+</section>
 
 {% endblock %}

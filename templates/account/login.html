@@ -2,20 +2,20 @@
 
 {% block content %}
 
-<div class="auth-wrapper">
+<section class="auth-wrapper" aria-labelledby="login-title">
 
-    <div class="auth-card">
+    <article class="auth-card">
 
-        <div class="auth-title">Welcome Back</div>
-        <div class="auth-subtitle">Login to continue to your account</div>
+        <h1 class="auth-title" id="login-title">Welcome</h1>
+        <div class="auth-subtitle">Login or <a href="{% url 'account_signup' %}">Sign up</a> to continue</div>
 
         <form method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
 
             {% if form.non_field_errors %}
-            <div class="errorlist">
+            <section class="errorlist" aria-live="polite">
                 {{ form.non_field_errors }}
-            </div>
+            </section>
             {% endif %}
 
             <div class="form-group">
@@ -31,9 +31,11 @@
             </div>
 
             {% if form.remember %}
-            <div class="remember">
-                {{ form.remember }}
-                <label>Remember me</label>
+            <div id=remember_me class="remember">
+                <label class="remember-label">
+                    {{ form.remember }}
+                    <span class="remember-text">Remember me</span>
+                </label>
             </div>
             {% endif %}
 
@@ -46,13 +48,13 @@
             </button>
         </form>
 
-        <div class="auth-footer">
+        <footer class="auth-footer">
             Don't have an account?
             <a href="{% url 'account_signup' %}">Sign up</a>
-        </div>
+        </footer>
 
-    </div>
+    </article>
 
-</div>
+</section>
 
 {% endblock %}

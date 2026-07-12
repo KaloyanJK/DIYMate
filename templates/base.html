@@ -4,23 +4,28 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildMate AI</title>
+    <title>DIYMate AI</title>
+    <style>
+        :root {
+            --app-bg-image: url("{% static 'images/DIYMate_background.jpg' %}");
+        }
+    </style>
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
 </head>
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
-    <a class="logo" href="{% url 'home' %}">BuildMate AI</a>
+<header>
+<nav class="navbar" aria-label="Primary">
+    <a class="logo" href="{% url 'home' %}">DIYMate AI</a>
 
-    <div class="nav-links">
+    <div class="nav-links" role="menubar">
         
-        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
 
         {% if user.is_authenticated %}
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'project_list' %}">Projects</a>
-            <a href="{% url 'billing_info' %}">Billing</a>
+            <a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+            <a href="{% url 'project_list' %}" class="{% if request.resolver_match.url_name == 'project_list' %}active{% endif %}">Projects</a>
+            <a href="{% url 'billing_info' %}" class="{% if request.resolver_match.url_name == 'billing_info' %}active{% endif %}">Billing</a>
             <a href="{% url 'account_logout' %}">Logout</a>
         {% else %}
             <a href="{% url 'account_login' %}">Login</a>
@@ -33,28 +38,77 @@
         </button>
 
     </div>
-</div>
+</nav>
+</header>
 
-<!-- PAGE CONTENT -->
-<div class="content">
+<main id="main-content" class="content" role="main">
     {% if messages %}
-    <div class="messages">
+    <section class="messages" aria-label="Notifications">
         {% for message in messages %}
-        <div class="message {{ message.tags|default:'info' }}">{{ message }}</div>
+        <article class="message {{ message.tags|default:'info' }}">{{ message }}</article>
         {% endfor %}
-    </div>
+    </section>
     {% endif %}
 
     {% block content %}
     {% endblock %}
+</main>
+
+<div id="app-loading-modal" class="app-loading-modal" hidden aria-hidden="true">
+    <div class="app-loading-modal__backdrop"></div>
+    <div class="app-loading-modal__dialog" role="status" aria-live="polite" aria-label="AI generation in progress">
+        <div class="app-loading-modal__spinner" aria-hidden="true"></div>
+        <p id="app-loading-modal-message" class="app-loading-modal__message">Generating drawing...</p>
+    </div>
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-    © 2026 BuildMate AI — Built by Kaloyan
-</div>
+<footer class="footer">
+    © 2026 DIYMate AI — Built by Kaloyan
+</footer>
 
 <script>
+    (function () {
+        var modal = document.getElementById('app-loading-modal');
+        var messageNode = document.getElementById('app-loading-modal-message');
+
+        if (!modal || !messageNode) {
+            return;
+        }
+
+        function showModal(message) {
+            messageNode.textContent = message || 'Generating drawing...';
+            modal.hidden = false;
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+        }
+
+        function hideModal() {
+            modal.hidden = true;
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+
+        window.DIYMateLoadingModal = {
+            show: showModal,
+            hide: hideModal
+        };
+
+        document.addEventListener('submit', function (event) {
+            var form = event.target.closest('form.js-ai-modal-form');
+            if (!form) {
+                return;
+            }
+
+            var message = form.getAttribute('data-loading-message') || 'Generating drawing...';
+            showModal(message);
+
+            var buttons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+            buttons.forEach(function (button) {
+                button.disabled = true;
+            });
+        });
+    })();
+
     // Simple theme toggler using a body class + localStorage.
     (function () {
         var storageKey = 'diymate-theme';

@@ -2,119 +2,193 @@
 
 {% block content %}
 <section class="page-shell">
-<div class="card project-page-card">
-<section class="project-detail-page">
+    <article class="card project-page-card">
+        <section class="project-detail-page">
+            <div class="container">
 
-<div class="container">
+                <nav class="project-nav" aria-label="Project navigation">
+                    {% if previous_project %}
+                    <a href="{% url 'project_detail' previous_project.id %}" class="nav-link">← Previous Project</a>
+                    {% else %}
+                    <span class="nav-link disabled">← Previous Project</span>
+                    {% endif %}
 
-    <div class="project-nav">
-        {% if previous_project %}
-        <a href="{% url 'project_detail' previous_project.id %}" class="nav-link">← Previous Project</a>
-        {% else %}
-        <span class="nav-link disabled">← Previous Project</span>
-        {% endif %}
+                    <a href="{% url 'project_list' %}" class="nav-link">All Projects</a>
 
-        <a href="{% url 'project_list' %}" class="nav-link">All Projects</a>
+                    {% if next_project %}
+                    <a href="{% url 'project_detail' next_project.id %}" class="nav-link">Next Project →</a>
+                    {% else %}
+                    <span class="nav-link disabled">Next Project →</span>
+                    {% endif %}
+                </nav>
 
-        {% if next_project %}
-        <a href="{% url 'project_detail' next_project.id %}" class="nav-link">Next Project →</a>
-        {% else %}
-        <span class="nav-link disabled">Next Project →</span>
-        {% endif %}
-    </div>
+                <header class="project-header">
+                    <h1>{{ project.title }}</h1>
+                    <p class="meta">
+                        Budget: £{{ project.budget }} • Dimensions: {{ project.dimensions }}
+                    </p>
+                </header>
 
-    <!-- PROJECT HEADER -->
-    <div class="project-header">
-        <h1>{{ project.title }}</h1>
-        <p class="meta">
-            Budget: £{{ project.budget }} • Dimensions: {{ project.dimensions }}
-        </p>
-    </div>
+                <section class="project-card" aria-labelledby="project-description-title">
+                    <h2 id="project-description-title">Description</h2>
+                    <p>{{ project.description }}</p>
+                </section>
 
-    <!-- PROJECT DESCRIPTION -->
-    <div class="project-card">
-        <h3>Description</h3>
-        <p>{{ project.description }}</p>
-    </div>
+                <section class="actions" aria-label="Project actions">
+                    <form method="post" action="{% url 'generate_plan' project.id %}" class="inline-action-form js-ai-modal-form" data-loading-message="Generating project plan...">
+                        {% csrf_token %}
+                        <button type="submit" class="btn primary" id="generate-ai-plan-btn">
+                            {% if latest_plan %}Use Cached Plan{% else %}Generate AI Plan{% endif %}
+                        </button>
+                    </form>
 
-    <!-- ACTION BUTTONS -->
-    <div class="actions">
+                    {% if latest_plan %}
+                    <form method="post" action="{% url 'regenerate_plan_drawing' project.id %}" class="inline-action-form js-ai-modal-form" data-loading-message="Generating technical drawing...">
+                        {% csrf_token %}
+                        <button type="submit" class="btn warning">Generate Drawing</button>
+                    </form>
 
-        {% comment %} <a href="{% url 'generate_plan' project.id %}" class="btn primary">
-            Generate AI Plan
-        </a> {% endcomment %}
+                    <form method="post" action="{% url 'generate_plan_inspirations' project.id %}" class="inline-action-form js-ai-modal-form" data-loading-message="Generating inspiration ideas...">
+                        {% csrf_token %}
+                        <button type="submit" class="btn secondary">Get Inspiration Ideas</button>
+                    </form>
+                    {% endif %}
 
-        <a href="{% url 'edit_project' project.id %}" class="btn warning">
-            Edit
-        </a>
+                    <a href="{% url 'edit_project' project.id %}" class="btn warning">
+                        Edit
+                    </a>
 
-        <a href="{% url 'delete_project' project.id %}" class="btn danger">
-            Delete
-        </a>
+                    <a href="{% url 'delete_project' project.id %}" class="btn danger">
+                        Delete
+                    </a>
+                </section>
 
-    </div>
+                <h2 class="section-title">AI Generated Plans</h2>
 
-    <!-- AI PLANS SECTION -->
-    <h2 class="section-title">AI Generated Plans</h2>
+                {% if latest_plan %}
+                <details class="collapse-block" open>
+                    <summary>Plan Summary</summary>
+                    <section class="table-wrapper" aria-label="AI plan summary table">
+                        <table class="plans-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Materials</th>
+                                    <th scope="col">Estimated Cost</th>
+                                    <th scope="col">Safety</th>
+                                    <th scope="col">Timeline</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td data-label="Materials">
+                                        <ul>
+                                            {% for m in latest_plan.materials %}
+                                                <li>{{ m }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td data-label="Estimated Cost">£{{ latest_plan.cost }}</td>
+                                    <td data-label="Safety">{{ latest_plan.safety }}</td>
+                                    <td data-label="Timeline">
+                                        <span class="timestamp">Created: {{ latest_plan.created_at|date:"d M Y H:i" }}</span>
+                                        {% if latest_plan.updated_at and latest_plan.updated_at != latest_plan.created_at %}
+                                        <br>
+                                        <span class="timestamp">Updated: {{ latest_plan.updated_at|date:"d M Y H:i" }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </details>
 
-    {% if project.plans.all %}
-    <div class="table-wrapper">
-        <table class="plans-table">
-            <thead>
-                <tr>
-                    <th>Materials</th>
-                    <th>Estimated Cost</th>
-                    <th>Safety</th>
-                    <th>Timeline</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for plan in project.plans.all %}
-                <tr>
-                    <td>
-                        <ul>
-                            {% for m in plan.materials %}
-                                <li>{{ m }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td>£{{ plan.cost }}</td>
-                    <td>{{ plan.safety }}</td>
-                    <td>
-                        <span class="timestamp">Created: {{ plan.created_at|date:"d M Y H:i" }}</span>
-                        {% if plan.updated_at and plan.updated_at != plan.created_at %}
-                        <br>
-                        <span class="timestamp">Updated: {{ plan.updated_at|date:"d M Y H:i" }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                <section class="instructions-section" aria-label="Detailed build instructions">
+                    <h3 class="instructions-header">Detailed Build Instructions</h3>
+                    <details class="collapse-block" open>
+                        <summary>Step-by-Step Plan</summary>
+                        <article class="instructions-card">
+                            <ol class="instruction-list">
+                                {% for step in latest_plan.steps %}
+                                    <li>{{ step }}</li>
+                                {% endfor %}
+                            </ol>
+                        </article>
+                    </details>
 
-    <div class="instructions-section">
-        <h3>Detailed Build Instructions</h3>
-        {% for plan in project.plans.all %}
-        <div class="instructions-card">
-            <ol>
-                {% for step in plan.steps %}
-                    <li>{{ step }}</li>
-                {% endfor %}
-            </ol>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-        <div class="empty-state">
-            <p>No AI plans yet</p>
-            <small>Click “Generate AI Plan” to get started 🚀</small>
-        </div>
-    {% endif %}
+                    {% if latest_plan.generated_images %}
+                    <details class="collapse-block">
+                        <summary>Pinterest-Style Inspirations</summary>
+                        <article class="instructions-card inspiration-card" aria-label="Pinterest-style inspirations">
+                            <ul class="inspiration-list">
+                                {% for idea in latest_plan.generated_images %}
+                                <li class="inspiration-item">
+                                    <strong>{{ idea.title|default:"Style idea" }}</strong>
+                                    <p>{{ idea.notes|default:idea.search_terms }}</p>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </article>
+                    </details>
+                    {% else %}
+                    <p class="drawing-note">No inspiration ideas yet. Click Get Inspiration Ideas to generate them on demand.</p>
+                    {% endif %}
 
-</div>
+                    <details class="collapse-block">
+                        <summary>AI Drawing</summary>
+                        <article class="instructions-card ai-drawing-card">
+
+                            {% if latest_plan.temporary_drawing_data %}
+                            <div class="drawing-preview fade-in" id="drawing-preview-block">
+                                <img src="{{ latest_plan.temporary_drawing_data }}" alt="AI generated technical blueprint drawing for {{ project.title }}" loading="lazy">
+                            </div>
+                            <p class="drawing-note warning-text">This image is temporary and will disappear if not saved.</p>
+                            <p class="drawing-note warning-text">This AI-generated image is temporary and will not be stored. Please download or save it if you want to keep it.</p>
+                            <p class="drawing-note accuracy-note">Drawing is AI-generated and may not be perfectly accurate. Always verify measurements before building.</p>
+
+                            <div class="drawing-actions">
+                                <form method="post" action="{% url 'save_plan_drawing' project.id %}" class="inline-action-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn success">Save Image</button>
+                                </form>
+                                <a href="{{ latest_plan.temporary_drawing_data }}" download="{{ project.title|slugify }}-ai-drawing.png" class="btn secondary">Download Image</a>
+                            </div>
+                            {% elif latest_plan.saved_drawing_data %}
+                            <div class="drawing-preview fade-in" id="drawing-preview-block">
+                                <img src="{{ latest_plan.saved_drawing_data }}" alt="Saved AI generated technical blueprint drawing for {{ project.title }}" loading="lazy">
+                            </div>
+                            <p class="drawing-note">Saved drawing linked to this AI plan.</p>
+                            <p class="drawing-note accuracy-note">Drawing is AI-generated and may not be perfectly accurate. Always verify measurements before building.</p>
+                            <div class="drawing-actions">
+                                <a href="{{ latest_plan.saved_drawing_data }}" download="{{ project.title|slugify }}-saved-ai-drawing.png" class="btn secondary">Download Image</a>
+                            </div>
+                            {% else %}
+                            <p class="drawing-note">No drawing preview yet. Click Generate Drawing to create one.</p>
+                            <p class="drawing-note accuracy-note">Drawing is AI-generated and may not be perfectly accurate. Always verify measurements before building.</p>
+                            {% endif %}
+                        </article>
+                    </details>
+                </section>
+                {% else %}
+                <section class="empty-state" aria-live="polite">
+                    <p>No AI plans yet</p>
+                    <small>Click Generate AI Plan to get started. Drawing and inspiration are optional and generated separately.</small>
+                </section>
+                {% endif %}
+
+            </div>
+        </section>
+    </article>
 </section>
-</div>
-</section>
+
+<script>
+    (function () {
+        const previewBlock = document.getElementById('drawing-preview-block');
+        if (previewBlock) {
+            window.setTimeout(function () {
+                previewBlock.classList.add('is-visible');
+            }, 140);
+        }
+    })();
+</script>
 
 {% endblock %}

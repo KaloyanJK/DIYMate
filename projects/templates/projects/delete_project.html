@@ -3,8 +3,8 @@
 {% block content %}
 <section class="delete-project-page">
 
-<div class="delete-box">
-    <h2>Delete Project</h2>
+<article class="delete-box" aria-labelledby="delete-project-title">
+    <h2 id="delete-project-title">Delete Project</h2>
 
     <p>Are you sure you want to delete:</p>
     <strong>{{ project.title }}</strong>
@@ -16,7 +16,7 @@
             <a href="{% url 'project_detail' project.id %}" class="btn ghost">Cancel</a>
         </div>
     </form>
-</div>
+</article>
 </section>
 
 {% endblock %}

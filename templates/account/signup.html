@@ -3,11 +3,11 @@
 
 {% block content %}
 
-<div class="auth-wrapper">
+<section class="auth-wrapper" aria-labelledby="signup-title">
 
-    <div class="auth-card">
+    <article class="auth-card">
 
-        <div class="auth-title">Create Account</div>
+        <h1 class="auth-title" id="signup-title">Create Account</h1>
         <div class="auth-subtitle">Join us and start building your projects</div>
 
         <form method="POST" action="{% url 'account_signup' %}">
@@ -72,7 +72,7 @@
             </form>
 
             {% if configured_providers %}
-            <div class="auth-divider">
+            <div class="auth-divider" role="separator" aria-label="Alternative sign up options">
                 OR
             </div>
             {% endif %}
@@ -91,13 +91,13 @@
             </a>
             {% endif %}
 
-        <div class="auth-footer">
+        <footer class="auth-footer">
             Already have an account?
             <a href="{% url 'account_login' %}">Login</a>
-        </div>
+        </footer>
 
-    </div>
+    </article>
 
-</div>
+</section>
 
 {% endblock %}

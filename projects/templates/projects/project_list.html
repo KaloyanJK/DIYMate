@@ -2,21 +2,21 @@
 
 {% block content %}
 <section class="page-shell">
-<div class="card project-page-card">
+<article class="card project-page-card">
 <section class="projects-list-page">
 
-<div class="header">
-    <h2>My Projects</h2>
+<header class="header">
+    <h1>My Projects</h1>
 
     <a href="{% url 'create_project' %}" class="btn primary">+ New Project</a>
-</div>
+</header>
 
 
-<div class="projects-grid">
+<section class="projects-grid" aria-label="Project cards">
 
     {% for project in projects %}
     
-    <div class="project-card">
+    <article class="project-card">
         <h3>{{ project.title }}</h3>
 
         <p>{{ project.description|truncatewords:15 }}</p>
@@ -37,15 +37,15 @@
             <a href="{% url 'edit_project' project.id %}" class="btn warning btn-sm">Edit</a>
             <a href="{% url 'delete_project' project.id %}" class="btn danger btn-sm">Delete</a>
         </div>
-    </div>
+    </article>
 
     {% empty %}
         <p>No projects yet. Start building something.</p>
     {% endfor %}
 
-</div>
 </section>
-</div>
+</section>
+</article>
 </section>
 
 {% endblock %}

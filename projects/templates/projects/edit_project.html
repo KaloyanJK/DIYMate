@@ -2,38 +2,39 @@
 
 {% block content %}
 
-<div class="form-container">
+<section class="form-container" aria-labelledby="edit-project-title">
 
-    <div class="form-card">
+    <article class="form-card">
 
-        <h2>Edit Project</h2>
+        <h1 id="edit-project-title">Edit Project</h1>
+        <p class="subtitle">Saving changes will update the project only. AI generation stays manual on the project page.</p>
 
         <form method="POST">
             {% csrf_token %}
             
             <!-- FORM FIELDS -->
             <div class="form-group">
-                <label>Title</label>
+                <label class="field-label">Title</label>
                 {{ form.title }}
             </div>
 
             <div class="form-group">
-                <label>Description</label>
+                <label class="field-label">Description</label>
                 {{ form.description }}
             </div>
 
             <div class="form-group">
-                <label>Dimensions</label>
+                <label class="field-label">Dimensions</label>
                 {{ form.dimensions }}
             </div>
 
             <div class="form-group">
-                <label>Budget (£)</label>
+                <label class="field-label">Budget (£)</label>
                 {{ form.budget }}
             </div>
 
             <div class="form-group">
-                <label>Image URL</label>
+                <label class="field-label">Image URL</label>
                 {{ form.image_url }}
             </div>
 
@@ -51,8 +52,8 @@
             </div>
         </form>
 
-    </div>
+    </article>
 
-</div>
+</section>
 
 {% endblock %}

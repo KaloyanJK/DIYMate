@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Delete Project</h2>
+<section class="page-shell" aria-labelledby="delete-project-legacy-title">
+<article class="card" style="max-width: 560px;">
+<h1 id="delete-project-legacy-title">Delete Project</h1>
 
 <p>Are you sure you want to delete "{{ project.title }}"?</p>
 
 <form method="POST">
     {% csrf_token %}
-    <button type="submit">Yes, delete</button>
+    <button type="submit" class="btn danger">Yes, delete</button>
 </form>
+
+</article>
+</section>
 
 {% endblock %}

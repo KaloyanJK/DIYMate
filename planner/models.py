@@ -15,6 +15,10 @@ class AIPlan(models.Model):
     safety = models.TextField()
 
     generated_images = models.JSONField(blank=True, null=True)
+    temporary_drawing_data = models.TextField(blank=True, null=True)
+    temporary_drawing_prompt = models.TextField(blank=True, null=True)
+    saved_drawing_data = models.TextField(blank=True, null=True)
+    drawing_saved_at = models.DateTimeField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

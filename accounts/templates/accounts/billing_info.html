@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="billing-wrap">
-    <div class="billing-hero">
+<section class="billing-wrap" aria-labelledby="billing-title">
+    <header class="billing-hero">
         <p class="eyebrow">Billing & Pricing</p>
-        <h1>Simple pricing, full DIY control</h1>
+        <h1 id="billing-title">Simple pricing, full DIY control</h1>
         <p class="subtitle">See your current plan, usage, and premium benefits before you upgrade.</p>
-    </div>
+    </header>
 
-    <div class="billing-grid">
+    <section class="billing-grid" aria-label="Plans">
         <section class="plan-card free">
             <h2>Free</h2>
             <p class="price">£0<span>/month</span></p>
@@ -38,7 +38,7 @@
                 <button type="submit" class="btn premium">Upgrade to Premium</button>
             </form>
         </section>
-    </div>
+    </section>
 
     <section class="account-billing">
         <h3>Your current billing status</h3>
@@ -66,5 +66,5 @@
             <button type="submit" class="btn premium">Manage in Stripe Portal</button>
         </form>
     </section>
-</div>
+</section>
 {% endblock %}

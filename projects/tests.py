@@ -58,13 +58,11 @@ class ProjectDetailTests(TestCase):
             safety='Old safety',
         )
 
-        fake_response = type('Response', (), {
-            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["New boards"], "steps": ["New step"], "cost": 25, "safety": "New safety"}'})()})()]
-        })()
+        fake_output = '{"materials": ["New boards"], "steps": ["New step"], "cost": 25, "safety": "New safety"}'
 
         self.client.force_login(self.user)
-        with patch('planner.views.client.chat.completions.create', return_value=fake_response):
-            response = self.client.get(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
+        with patch('planner.views.generate_plan_text', return_value=fake_output):
+            response = self.client.post(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
 
         self.assertEqual(response.status_code, 302)
         plans = AIPlan.objects.filter(project=self.project)
@@ -74,13 +72,9 @@ class ProjectDetailTests(TestCase):
         self.assertEqual(plans.first().cost, 25)
         self.assertEqual(plans.first().safety, 'New safety')
 
-    def test_create_project_generates_plan_and_redirects_to_detail(self):
-        fake_response = type('Response', (), {
-            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["New boards"], "steps": ["New step"], "cost": 30, "safety": "Use care"}'})()})()]
-        })()
-
+    def test_create_project_saves_without_generating_plan(self):
         self.client.force_login(self.user)
-        with patch('projects.views.client.chat.completions.create', return_value=fake_response):
+        with patch('projects.views.generate_plan_text') as mocked_generate:
             response = self.client.post(reverse('create_project'), {
                 'title': 'New Project',
                 'description': 'A new project',
@@ -91,11 +85,10 @@ class ProjectDetailTests(TestCase):
         project = Project.objects.get(title='New Project')
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('project_detail', kwargs={'pk': project.pk}))
-        plans = AIPlan.objects.filter(project=project)
-        self.assertEqual(plans.count(), 1)
-        self.assertEqual(plans.first().materials, ['New boards'])
+        self.assertFalse(AIPlan.objects.filter(project=project).exists())
+        mocked_generate.assert_not_called()
 
-    def test_edit_project_generates_new_plan_and_redirects_to_detail(self):
+    def test_edit_project_saves_without_regenerating_plan(self):
         AIPlan.objects.create(
             project=self.project,
             materials=['Old boards'],
@@ -104,12 +97,8 @@ class ProjectDetailTests(TestCase):
             safety='Old safety',
         )
 
-        fake_response = type('Response', (), {
-            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["Updated boards"], "steps": ["Updated step"], "cost": 45, "safety": "Updated safety"}'})()})()]
-        })()
-
         self.client.force_login(self.user)
-        with patch('projects.views.client.chat.completions.create', return_value=fake_response):
+        with patch('projects.views.generate_plan_text') as mocked_generate:
             response = self.client.post(reverse('edit_project', kwargs={'pk': self.project.pk}), {
                 'title': 'Garden Shed',
                 'description': 'Updated description',
@@ -121,16 +110,13 @@ class ProjectDetailTests(TestCase):
         self.assertRedirects(response, reverse('project_detail', kwargs={'pk': self.project.pk}))
         plans = AIPlan.objects.filter(project=self.project)
         self.assertEqual(plans.count(), 1)
-        self.assertEqual(plans.first().materials, ['Updated boards'])
-        self.assertEqual(plans.first().steps, ['Updated step'])
+        self.assertEqual(plans.first().materials, ['Old boards'])
+        self.assertEqual(plans.first().steps, ['Old step'])
+        mocked_generate.assert_not_called()
 
-    def test_create_project_normalizes_generated_steps(self):
-        fake_response = type('Response', (), {
-            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["Boards"], "steps": ["1.1 Measure the area", "2.2 Cut the boards"], "cost": 20, "safety": "Use care"}'})()})()]
-        })()
-
+    def test_create_project_does_not_create_plan(self):
         self.client.force_login(self.user)
-        with patch('projects.views.client.chat.completions.create', return_value=fake_response):
+        with patch('projects.views.generate_plan_text') as mocked_generate:
             response = self.client.post(reverse('create_project'), {
                 'title': 'Normalized Project',
                 'description': 'A test project',
@@ -138,10 +124,10 @@ class ProjectDetailTests(TestCase):
                 'budget': '300',
             })
 
-        project = Project.objects.get(title='Normalized Project')
         self.assertEqual(response.status_code, 302)
-        plan = AIPlan.objects.get(project=project)
-        self.assertEqual(plan.steps, ['Measure the area', 'Cut the boards'])
+        project = Project.objects.get(title='Normalized Project')
+        self.assertFalse(AIPlan.objects.filter(project=project).exists())
+        mocked_generate.assert_not_called()
 
     def test_free_user_at_limit_cannot_generate_plan(self):
         Subscription.objects.create(
@@ -152,12 +138,12 @@ class ProjectDetailTests(TestCase):
         )
 
         self.client.force_login(self.user)
-        with patch('planner.views.client.chat.completions.create') as mocked_create:
-            response = self.client.get(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
+        with patch('planner.views.generate_plan_text') as mocked_generate:
+            response = self.client.post(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
 
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('project_detail', kwargs={'pk': self.project.pk}))
-        mocked_create.assert_not_called()
+        mocked_generate.assert_not_called()
 
     def test_premium_user_has_unlimited_generate_plan_access(self):
         Subscription.objects.create(
@@ -166,16 +152,44 @@ class ProjectDetailTests(TestCase):
             is_active=True,
             ai_usage_count=10_000,
         )
-        fake_response = type('Response', (), {
-            'choices': [type('Choice', (), {'message': type('Message', (), {'content': '{"materials": ["Premium boards"], "steps": ["Do premium step"], "cost": 55, "safety": "Premium safety"}'})()})()]
-        })()
+        fake_output = '{"materials": ["Premium boards"], "steps": ["Do premium step"], "cost": 55, "safety": "Premium safety"}'
 
         self.client.force_login(self.user)
-        with patch('planner.views.client.chat.completions.create', return_value=fake_response):
-            response = self.client.get(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
+        with patch('planner.views.generate_plan_text', return_value=fake_output):
+            response = self.client.post(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
 
         self.assertEqual(response.status_code, 302)
         self.assertTrue(AIPlan.objects.filter(project=self.project).exists())
+
+    def test_generate_plan_stores_temporary_drawing_preview(self):
+        fake_output = '{"materials": ["Boards"], "steps": ["Step 1"], "cost": 40, "safety": "Use goggles"}'
+
+        self.client.force_login(self.user)
+        with patch('planner.views.generate_plan_text', return_value=fake_output):
+            with patch('planner.views.generate_drawing_preview', return_value=('https://example.com/blueprint.png', 'drawing prompt')):
+                response = self.client.post(reverse('generate_plan', kwargs={'project_id': self.project.pk}))
+
+        self.assertEqual(response.status_code, 302)
+        plan = AIPlan.objects.get(project=self.project)
+        self.assertEqual(plan.temporary_drawing_data, 'https://example.com/blueprint.png')
+
+    def test_save_drawing_moves_temporary_to_permanent(self):
+        AIPlan.objects.create(
+            project=self.project,
+            materials=['Wood boards'],
+            steps=['Measure area'],
+            cost='90.00',
+            safety='Wear gloves',
+            temporary_drawing_data='https://example.com/temp-drawing.png',
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.post(reverse('save_plan_drawing', kwargs={'project_id': self.project.pk}))
+
+        self.assertEqual(response.status_code, 302)
+        plan = AIPlan.objects.get(project=self.project)
+        self.assertIsNone(plan.temporary_drawing_data)
+        self.assertEqual(plan.saved_drawing_data, 'https://example.com/temp-drawing.png')
 
 
 class ProjectListTests(TestCase):

@@ -3,18 +3,22 @@
 {% block content %}
 
 <section class="hero">
-    <div class="hero-card">
+    <article class="hero-card">
         <h1>Plan Your DIY Projects with AI</h1>
         <p>
             Turn your ideas into structured build plans with materials, cost estimates,
             and step-by-step guidance.
         </p>
 
-        <div class="buttons">
-            <a href="{% url 'account_signup' %}">Get Started</a>
-        </div>
-    </div>
+        <nav class="buttons" aria-label="Get started actions">
+            {% if user.is_authenticated %}
+            <a href="{% url 'project_list' %}">Get Started</a>
+            {% else %}
+            <a href="{% url 'account_login' %}?next={% url 'project_list' %}">Get Started</a>
+            {% endif %}
+        </nav>
+    </article>
 
 </section>
 
-{% endblock %}
+{% endblock %}  
