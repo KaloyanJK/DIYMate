@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from accounts.models import Subscription
 from planner.models import AIPlan
+from .forms import ProjectForm
 from .models import Project
 
 
@@ -128,6 +129,41 @@ class ProjectDetailTests(TestCase):
         project = Project.objects.get(title='Normalized Project')
         self.assertFalse(AIPlan.objects.filter(project=project).exists())
         mocked_generate.assert_not_called()
+
+    def test_free_user_form_hides_image_url_field(self):
+        form = ProjectForm(user=self.user)
+
+        self.assertNotIn('image_url', form.fields)
+
+    def test_free_user_cannot_submit_image_url(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(reverse('create_project'), {
+            'title': 'Image Restricted Project',
+            'description': 'A test project',
+            'dimensions': '4x6',
+            'budget': '300',
+            'image_url': 'https://example.com/should-not-save.png',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        project = Project.objects.get(title='Image Restricted Project')
+        self.assertIsNone(project.image_url)
+
+    def test_free_user_does_not_see_generate_drawing_button(self):
+        AIPlan.objects.create(
+            project=self.project,
+            materials=['Wood boards'],
+            steps=['Measure area'],
+            cost='90.00',
+            safety='Wear gloves',
+        )
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('project_detail', kwargs={'pk': self.project.pk}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'Generate Drawing')
 
     def test_free_user_at_limit_cannot_generate_plan(self):
         Subscription.objects.create(

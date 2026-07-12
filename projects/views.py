@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
-from accounts.services import consume_ai_generation_credit
+from accounts.services import consume_ai_generation_credit, get_or_create_subscription
 from planner.ai_instructions import AI_SYSTEM_INSTRUCTIONS, AI_USER_RULES
 from planner.openai_client import generate_image_data_url as openai_generate_image_data_url
 from planner.models import AIPlan
@@ -134,7 +134,7 @@ def save_ai_plan(project, data, temporary_drawing_data=None, drawing_prompt=None
 @login_required
 def create_project(request):
     if request.method == 'POST':
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, user=request.user)
         if form.is_valid():
             project = form.save(commit=False)
             project.user = request.user
@@ -142,7 +142,7 @@ def create_project(request):
             messages.success(request, 'Project created successfully. Generate an AI plan when you are ready.')
             return redirect('project_detail', pk=project.id)
     else:
-        form = ProjectForm()
+        form = ProjectForm(user=request.user)
 
     return render(request, 'projects/create_project.html', {'form': form})
 
@@ -156,6 +156,7 @@ def project_list(request):
 @login_required
 def project_detail(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)
+    subscription = get_or_create_subscription(request.user)
     projects = list(Project.objects.filter(user=request.user).order_by('-created_at'))
     latest_plan = project.plans.order_by('-created_at').first()
 
@@ -180,6 +181,7 @@ def project_detail(request, pk):
         'latest_plan': latest_plan,
         'previous_project': previous_project,
         'next_project': next_project,
+        'subscription': subscription,
     })
 
 
@@ -188,13 +190,13 @@ def edit_project(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)
 
     if request.method == 'POST':
-        form = ProjectForm(request.POST, instance=project)
+        form = ProjectForm(request.POST, instance=project, user=request.user)
         if form.is_valid():
             project = form.save()
             messages.success(request, 'Project updated successfully. Regenerate the AI plan manually if you want a refreshed version.')
             return redirect('project_detail', pk=project.id)
     else:
-        form = ProjectForm(instance=project)
+        form = ProjectForm(instance=project, user=request.user)
 
     return render(request, 'projects/edit_project.html', {
         'form': form,

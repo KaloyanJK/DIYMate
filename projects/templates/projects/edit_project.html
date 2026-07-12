@@ -33,10 +33,14 @@
                 {{ form.budget }}
             </div>
 
+            {% if form.image_url %}
             <div class="form-group">
                 <label class="field-label">Image URL</label>
                 {{ form.image_url }}
             </div>
+            {% else %}
+            <p class="drawing-note">Image URL upload is available on Premium only.</p>
+            {% endif %}
 
             <!-- BUTTONS -->
             <div class="btn-group">

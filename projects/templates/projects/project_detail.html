@@ -43,10 +43,12 @@
                     </form>
 
                     {% if latest_plan %}
+                    {% if subscription.plan == 'premium' %}
                     <form method="post" action="{% url 'regenerate_plan_drawing' project.id %}" class="inline-action-form js-ai-modal-form" data-loading-message="Generating technical drawing...">
                         {% csrf_token %}
                         <button type="submit" class="btn warning">Generate Drawing</button>
                     </form>
+                    {% endif %}
 
                     <form method="post" action="{% url 'generate_plan_inspirations' project.id %}" class="inline-action-form js-ai-modal-form" data-loading-message="Generating inspiration ideas...">
                         {% csrf_token %}
@@ -137,6 +139,10 @@
                         <summary>AI Drawing</summary>
                         <article class="instructions-card ai-drawing-card">
 
+                            {% if subscription.plan != 'premium' %}
+                            <p class="drawing-note">AI drawing generation is available on Premium only.</p>
+                            <p class="drawing-note accuracy-note">Upgrade to generate and save technical drawings for this project.</p>
+                            {% else %}
                             {% if latest_plan.temporary_drawing_data %}
                             <div class="drawing-preview fade-in" id="drawing-preview-block">
                                 <img src="{{ latest_plan.temporary_drawing_data }}" alt="AI generated technical blueprint drawing for {{ project.title }}" loading="lazy">
@@ -164,6 +170,7 @@
                             {% else %}
                             <p class="drawing-note">No drawing preview yet. Click Generate Drawing to create one.</p>
                             <p class="drawing-note accuracy-note">Drawing is AI-generated and may not be perfectly accurate. Always verify measurements before building.</p>
+                            {% endif %}
                             {% endif %}
                         </article>
                     </details>
