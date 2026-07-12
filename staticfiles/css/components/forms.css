@@ -1,0 +1,200 @@
+/* Shared page shell, forms, and profile */
+.page-shell,
+.form-container,
+.profile-container {
+    color: var(--text-content-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 16px;
+}
+
+.page-shell {
+    align-items: flex-start;
+}
+
+.card,
+.form-card,
+.profile-card,
+.delete-box {
+    width: 100%;
+    background: var(--bg-panel);
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+}
+
+.card,
+.form-card {
+    max-width: 940px;
+}
+
+.profile-card {
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-card p {
+    color: var(--text-content-main);
+}
+
+.form-card {
+    max-width: 860px;
+}
+
+.subtitle {
+    color: var(--text-soft);
+    margin: 0 0 20px;
+}
+
+.styled-form p,
+.styled-form .form-group,
+.profile-form .form-grid,
+.profile-form .form-group,
+.form-container .form-group {
+    margin-bottom: 14px;
+}
+
+.styled-form p > label,
+.styled-form .field-label,
+.profile-form .field-label,
+.form-container .field-label {
+    display: block;
+    font-size: 14px;
+    color: var(--form-label-color);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.styled-form input,
+.styled-form textarea,
+.styled-form select,
+.profile-form input,
+.profile-form textarea,
+.form-container input,
+.form-container textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--field-border);
+    background: var(--field-bg);
+    color: var(--field-text);
+}
+
+.styled-form textarea,
+.profile-form textarea,
+.form-container textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.styled-form input:focus,
+.styled-form textarea:focus,
+.styled-form select:focus,
+.profile-form input:focus,
+.profile-form textarea:focus,
+.form-container input:focus,
+.form-container textarea:focus {
+    outline: 2px solid var(--field-focus-outline);
+    outline-offset: 1px;
+}
+
+.styled-form .btn {
+    margin-top: 10px;
+    padding: 12px 16px;
+}
+
+.billing-actions {
+    margin-bottom: 12px;
+}
+
+.actions,
+.btn-group,
+.billing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.billing-actions,
+.actions {
+    width: 100%;
+}
+
+.billing-actions form {
+    width: 100%;
+    margin: 0;
+}
+
+.actions .btn,
+.billing-actions .btn,
+.billing-actions button.btn,
+.profile-card .btn {
+    width: 100%;
+    padding: 12px 14px;
+    text-align: center;
+}
+
+.profile-card h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+}
+
+.avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.email {
+    color: var(--text-soft);
+    margin: 0 0 20px;
+}
+
+.user-info {
+    width: 100%;
+    display: grid;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.user-info span {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--text-content-main);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--content-divider);
+}
+
+.user-info strong {
+    color: var(--text-content-main);
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}

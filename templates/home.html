@@ -1,24 +1,38 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
 
 <section class="hero">
     <article class="hero-card">
+
+        <img
+            src="{% static 'logo_and_favicon/logo-icon.webp' %}"
+            alt="DIYMate AI logo"
+            class="hero-logo"
+            width="96"
+            height="96"
+        >
+
         <h1>Plan Your DIY Projects with AI</h1>
+
         <p>
-            Turn your ideas into structured build plans with materials, cost estimates,
-            and step-by-step guidance.
+            Transform your DIY ideas into detailed project plans with AI-generated instructions, 
+            material lists, cost estimates, and step-by-step guidance.
         </p>
 
         <nav class="buttons" aria-label="Get started actions">
             {% if user.is_authenticated %}
-            <a href="{% url 'project_list' %}">Get Started</a>
+                <a href="{% url 'project_list' %}">Get Started</a>
             {% else %}
-            <a href="{% url 'account_login' %}?next={% url 'project_list' %}">Get Started</a>
+                <a href="{% url 'account_login' %}?next={% url 'project_list' %}">
+                    Get Started
+                </a>
             {% endif %}
         </nav>
-    </article>
 
+    </article>
 </section>
 
-{% endblock %}  
+{% endblock %}

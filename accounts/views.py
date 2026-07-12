@@ -68,7 +68,7 @@ def login_view(request):
                     request.session.set_expiry(1209600)
                 else:
                     request.session.set_expiry(0)
-                return redirect('profile')
+                return redirect('home')
 
             _record_login_event(request, identifier, user, False)
             form.add_error(None, 'Invalid username/email or password.')
@@ -87,7 +87,7 @@ def signup_view(request):
             user = form.save()
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
-            return redirect('profile')
+            return redirect('home')
     else:
         form = RegisterForm()
 

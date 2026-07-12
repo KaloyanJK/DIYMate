@@ -1,0 +1,8 @@
+/*
+    DIYMate stylesheet entrypoint.
+    Keep feature styles isolated in components/* for easier maintenance.
+*/
+@import url("components/core.css");
+@import url("components/auth.css");
+@import url("components/forms.css");
+@import url("components/pages.css");
