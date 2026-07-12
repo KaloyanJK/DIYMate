@@ -224,6 +224,49 @@ def _get_or_create_stripe_customer(subscription):
     return customer['id']
 
 
+def _sync_subscription_from_checkout_session(user, session_id):
+    if not session_id or not settings.STRIPE_SECRET_KEY:
+        return False
+
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    try:
+        checkout_session = stripe.checkout.Session.retrieve(
+            session_id,
+            expand=['subscription'],
+        )
+    except stripe.error.StripeError:
+        return False
+
+    subscription = get_or_create_subscription(user)
+    customer_id = checkout_session.get('customer')
+    stripe_subscription = checkout_session.get('subscription')
+
+    subscription_id = None
+    if isinstance(stripe_subscription, dict):
+        subscription_id = stripe_subscription.get('id')
+    else:
+        subscription_id = stripe_subscription
+
+    if customer_id:
+        subscription.stripe_customer_id = customer_id
+    if subscription_id:
+        subscription.stripe_subscription_id = subscription_id
+    if customer_id or subscription_id:
+        subscription.save(update_fields=['stripe_customer_id', 'stripe_subscription_id', 'updated_at'])
+
+    if not isinstance(stripe_subscription, dict) and subscription_id:
+        try:
+            stripe_subscription = stripe.Subscription.retrieve(subscription_id)
+        except stripe.error.StripeError:
+            return False
+
+    if isinstance(stripe_subscription, dict):
+        update_subscription_from_stripe_payload(subscription, stripe_subscription)
+        return True
+
+    return False
+
+
 @login_required
 def billing_info_view(request):
     subscription = get_or_create_subscription(request.user)
@@ -264,7 +307,10 @@ def start_checkout_session(request):
             mode='subscription',
             customer=customer_id,
             line_items=[line_item],
-            success_url=request.build_absolute_uri(reverse('subscription_success')),
+            success_url=(
+                request.build_absolute_uri(reverse('subscription_success'))
+                + '?session_id={CHECKOUT_SESSION_ID}'
+            ),
             cancel_url=request.build_absolute_uri(reverse('subscription_cancel')),
             client_reference_id=str(request.user.id),
             metadata={'user_id': str(request.user.id)},
@@ -302,7 +348,13 @@ def billing_portal(request):
 
 @login_required
 def subscription_success(request):
-    messages.success(request, 'Payment completed. Your Premium access is being activated.')
+    session_id = request.GET.get('session_id', '').strip()
+    was_synced = _sync_subscription_from_checkout_session(request.user, session_id)
+
+    if was_synced:
+        messages.success(request, 'Payment completed. Your Premium access is active.')
+    else:
+        messages.success(request, 'Payment completed. Your Premium access is being activated.')
     return redirect('profile')
 
 

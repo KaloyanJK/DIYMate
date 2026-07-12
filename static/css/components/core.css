@@ -152,6 +152,30 @@ h5 {
     flex-wrap: wrap;
 }
 
+.nav-toggle {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-panel);
+    color: var(--text-main);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.nav-toggle-bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+}
+
 .nav-links a {
     color: var(--nav-link-color);
     margin-left: 20px;
@@ -182,6 +206,54 @@ h5 {
 
 .theme-toggle:hover {
     transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    .nav-toggle {
+        display: inline-flex;
+        margin-left: auto;
+    }
+
+    .nav-links {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        padding: 8px;
+        border-radius: 12px;
+        border: 1px solid var(--border-soft);
+        background: var(--bg-panel);
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links a,
+    .theme-toggle {
+        margin: 0;
+    }
+
+    .nav-links a {
+        padding: 10px 8px;
+    }
+
+    .theme-toggle {
+        width: 100%;
+        justify-content: center;
+        border-radius: 10px;
+    }
+
+    body.nav-open {
+        overflow: hidden;
+    }
 }
 
 .content {

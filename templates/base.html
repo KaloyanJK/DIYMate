@@ -18,7 +18,20 @@
 <nav class="navbar" aria-label="Primary">
     <a class="logo" href="{% url 'home' %}">DIYMate AI</a>
 
-    <div class="nav-links" role="menubar">
+    <button
+        id="navToggle"
+        class="nav-toggle"
+        type="button"
+        aria-controls="primaryNavLinks"
+        aria-expanded="false"
+        aria-label="Open navigation menu"
+    >
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+    </button>
+
+    <div id="primaryNavLinks" class="nav-links" role="menubar">
         
         <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
 
@@ -130,6 +143,55 @@
             var nextTheme = body.classList.contains('light-mode') ? 'dark' : 'light';
             localStorage.setItem(storageKey, nextTheme);
             applyTheme(nextTheme);
+        });
+    })();
+
+    (function () {
+        var navToggle = document.getElementById('navToggle');
+        var navLinks = document.getElementById('primaryNavLinks');
+        if (!navToggle || !navLinks) {
+            return;
+        }
+
+        var mobileMediaQuery = window.matchMedia('(max-width: 900px)');
+
+        function closeMenu() {
+            navLinks.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+            navToggle.setAttribute('aria-label', 'Open navigation menu');
+            document.body.classList.remove('nav-open');
+        }
+
+        function openMenu() {
+            navLinks.classList.add('open');
+            navToggle.setAttribute('aria-expanded', 'true');
+            navToggle.setAttribute('aria-label', 'Close navigation menu');
+            document.body.classList.add('nav-open');
+        }
+
+        navToggle.addEventListener('click', function () {
+            if (navLinks.classList.contains('open')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        });
+
+        navLinks.addEventListener('click', function (event) {
+            if (!mobileMediaQuery.matches) {
+                return;
+            }
+
+            var clickedLink = event.target.closest('a');
+            if (clickedLink) {
+                closeMenu();
+            }
+        });
+
+        mobileMediaQuery.addEventListener('change', function (event) {
+            if (!event.matches) {
+                closeMenu();
+            }
         });
     })();
 </script>

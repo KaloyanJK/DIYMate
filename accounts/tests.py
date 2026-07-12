@@ -187,3 +187,47 @@ class SubscriptionAdminControlTests(TestCase):
         allowed, _subscription, message = consume_ai_generation_credit(self.user)
         self.assertTrue(allowed)
         self.assertEqual(message, '')
+
+
+class SubscriptionSuccessSyncTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username='syncuser',
+            email='sync@example.com',
+            password='StrongPass123!',
+        )
+
+    @override_settings(STRIPE_SECRET_KEY='sk_test_123')
+    @patch('accounts.views.stripe.checkout.Session.retrieve')
+    def test_success_view_syncs_premium_status_from_checkout_session(self, mock_session_retrieve):
+        self.client.force_login(self.user)
+        mock_session_retrieve.return_value = {
+            'customer': 'cus_sync_123',
+            'subscription': {
+                'id': 'sub_sync_123',
+                'customer': 'cus_sync_123',
+                'status': 'active',
+                'current_period_end': 1790000000,
+                'items': {
+                    'data': [
+                        {
+                            'price': {
+                                'id': 'price_sync_123',
+                            }
+                        }
+                    ]
+                },
+            },
+        }
+
+        response = self.client.get(
+            reverse('subscription_success') + '?session_id=cs_test_123',
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        subscription = Subscription.objects.get(user=self.user)
+        self.assertEqual(subscription.plan, Subscription.PLAN_PREMIUM)
+        self.assertTrue(subscription.is_active)
+        self.assertEqual(subscription.stripe_customer_id, 'cus_sync_123')
+        self.assertEqual(subscription.stripe_subscription_id, 'sub_sync_123')
