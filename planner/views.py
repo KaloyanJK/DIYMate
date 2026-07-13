@@ -18,7 +18,7 @@ from .openai_client import generate_image_data_url as openai_generate_image_data
 
 text_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-
+# Normalize AI-generated steps by removing numbering and cleaning text formatting
 def normalize_steps(steps):
     normalized = []
     for step in steps:
@@ -29,7 +29,7 @@ def normalize_steps(steps):
             normalized.append(cleaned)
     return normalized
 
-
+# Create a structured project context string for AI prompts
 def build_project_context(project):
     return (
         f"title: {project.title}\n"
@@ -38,7 +38,7 @@ def build_project_context(project):
         f"budget_gbp: {project.budget}"
     )
 
-
+# Build the AI prompt used to generate a DIY project plan
 def build_plan_prompt(project):
     return f"""
 Generate a focused DIY plan as strict JSON.
@@ -62,7 +62,7 @@ CONSTRAINTS
 - No extra keys.
 """.strip()
 
-
+# Build the AI prompt used to generate project inspiration ideas
 def build_inspiration_prompt(project):
     return f"""
 Generate style inspiration ideas as strict JSON.
@@ -88,7 +88,7 @@ CONSTRAINTS
 - No extra keys.
 """.strip()
 
-
+# Build the AI prompt used to generate a technical drawing
 def build_drawing_prompt(project):
     return f"""
 Create a clean technical blueprint drawing for this DIY project.
@@ -103,7 +103,7 @@ CONSTRAINTS
 - Respect provided dimensions.
 """.strip()
 
-
+# Parse and convert AI JSON output into a Python dictionary
 def parse_ai_json_output(output):
     output = (output or "").strip()
     if output.startswith("```"):
@@ -111,7 +111,7 @@ def parse_ai_json_output(output):
         output = output.replace("json", "", 1).strip()
     return json.loads(output)
 
-
+# Generate a structured DIY plan response using OpenAI
 def generate_plan_text(prompt):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
@@ -128,7 +128,7 @@ def generate_plan_text(prompt):
     )
     return response.choices[0].message.content
 
-
+# Generate a technical drawing preview using OpenAI image generation
 def generate_drawing_preview(project):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
@@ -142,11 +142,11 @@ def generate_drawing_preview(project):
     )
     return image_data_url, drawing_prompt
 
-
+# Check whether a project already has a generated drawing
 def project_has_any_drawing(plan):
     return bool(plan and (plan.temporary_drawing_data or plan.saved_drawing_data))
 
-
+# Check whether the user is allowed to generate a project drawing
 def can_generate_project_drawing(user, plan):
     subscription = get_or_create_subscription(user)
 
@@ -160,6 +160,7 @@ def can_generate_project_drawing(user, plan):
 
 
 @login_required
+# Generate and save an AI-powered DIY project plan
 def generate_plan(request, project_id):
     if request.method != "POST":
         return redirect("project_detail", pk=project_id)
@@ -204,6 +205,7 @@ def generate_plan(request, project_id):
 
 
 @login_required
+# Generate and save AI inspiration ideas for a project
 def generate_plan_inspirations(request, project_id):
     if request.method != "POST":
         return redirect("project_detail", pk=project_id)
@@ -244,6 +246,7 @@ def generate_plan_inspirations(request, project_id):
 
 
 @login_required
+# Generate a temporary technical drawing preview for a project
 def regenerate_plan_drawing(request, project_id):
     if request.method != "POST":
         return redirect("project_detail", pk=project_id)
@@ -278,6 +281,7 @@ def regenerate_plan_drawing(request, project_id):
 
 
 @login_required
+# Save a temporary generated drawing permanently to the AI plan
 def save_plan_drawing(request, project_id):
     if request.method != "POST":
         return redirect("project_detail", pk=project_id)

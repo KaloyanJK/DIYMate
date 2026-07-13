@@ -42,10 +42,9 @@ This project was designed as a practical assistant for DIY planning, with a focu
 
 Mockup placeholders :
 
-- Home mockup: ![]()
-- Project list mockup: ![]()
-- Project detail mockup: ![]()
-- Billing mockup: ![]()
+- Home page mockup: ![](validations/mockups/Homa_page.png)
+- Login page mockup: ![](validations/mockups/Login_page.png)
+- Regiter page mockup: ![](validations/mockups/Register_page.png)
 
 ## Project Overview
 
@@ -223,7 +222,7 @@ Data model overview:
 ## Installation and Local Setup
 
 ```bash
-git clone <https://github.com/KaloyanJK/DIYMate.git>
+git clone https://github.com/KaloyanJK/DIYMate.git
 cd DIYMate-Project+Stripe
 python -m venv .venv
 # Windows PowerShell

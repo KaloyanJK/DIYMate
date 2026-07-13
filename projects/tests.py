@@ -12,6 +12,7 @@ from .models import Project
 
 
 class ProjectDetailTests(TestCase):
+    # Set up a test user and project before each project detail test
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             username='tester',
@@ -26,6 +27,7 @@ class ProjectDetailTests(TestCase):
             budget='500',
         )
 
+    # Verify that the project detail page displays an existing AI-generated plan
     def test_project_detail_shows_ai_plan_when_available(self):
         AIPlan.objects.create(
             project=self.project,
@@ -43,6 +45,7 @@ class ProjectDetailTests(TestCase):
         self.assertContains(response, 'Wood boards')
         self.assertContains(response, 'Measure the area')
 
+    # Verify that the delete project confirmation page loads correctly
     def test_delete_project_page_renders(self):
         self.client.force_login(self.user)
         response = self.client.get(reverse('delete_project', kwargs={'pk': self.project.pk}))
@@ -50,6 +53,7 @@ class ProjectDetailTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Delete Project')
 
+    # Verify that generating a new AI plan replaces the previous project plan
     def test_generating_plan_replaces_existing_plan_for_project(self):
         AIPlan.objects.create(
             project=self.project,
@@ -73,6 +77,7 @@ class ProjectDetailTests(TestCase):
         self.assertEqual(plans.first().cost, 25)
         self.assertEqual(plans.first().safety, 'New safety')
 
+    # Verify that creating a project does not automatically generate an AI plan
     def test_create_project_saves_without_generating_plan(self):
         self.client.force_login(self.user)
         with patch('projects.views.generate_plan_text') as mocked_generate:
@@ -89,6 +94,7 @@ class ProjectDetailTests(TestCase):
         self.assertFalse(AIPlan.objects.filter(project=project).exists())
         mocked_generate.assert_not_called()
 
+    # Verify that editing a project does not regenerate the existing AI plan
     def test_edit_project_saves_without_regenerating_plan(self):
         AIPlan.objects.create(
             project=self.project,
@@ -115,6 +121,7 @@ class ProjectDetailTests(TestCase):
         self.assertEqual(plans.first().steps, ['Old step'])
         mocked_generate.assert_not_called()
 
+    # Verify that creating a project does not create an AI plan by default
     def test_create_project_does_not_create_plan(self):
         self.client.force_login(self.user)
         with patch('projects.views.generate_plan_text') as mocked_generate:
@@ -130,11 +137,13 @@ class ProjectDetailTests(TestCase):
         self.assertFalse(AIPlan.objects.filter(project=project).exists())
         mocked_generate.assert_not_called()
 
+    # Verify that free users cannot access the image URL field in the project form
     def test_free_user_form_hides_image_url_field(self):
         form = ProjectForm(user=self.user)
 
         self.assertNotIn('image_url', form.fields)
 
+    # Verify that free users cannot submit or save an image URL
     def test_free_user_cannot_submit_image_url(self):
         self.client.force_login(self.user)
 
@@ -150,6 +159,7 @@ class ProjectDetailTests(TestCase):
         project = Project.objects.get(title='Image Restricted Project')
         self.assertIsNone(project.image_url)
 
+    # Verify that free users do not see the AI drawing generation option
     def test_free_user_does_not_see_generate_drawing_button(self):
         AIPlan.objects.create(
             project=self.project,
@@ -165,6 +175,7 @@ class ProjectDetailTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Generate Drawing')
 
+    # Verify that free users who reach the AI usage limit cannot generate more plans
     def test_free_user_at_limit_cannot_generate_plan(self):
         Subscription.objects.create(
             user=self.user,
@@ -181,6 +192,7 @@ class ProjectDetailTests(TestCase):
         self.assertRedirects(response, reverse('project_detail', kwargs={'pk': self.project.pk}))
         mocked_generate.assert_not_called()
 
+    # Verify that Premium users can generate unlimited AI plans
     def test_premium_user_has_unlimited_generate_plan_access(self):
         Subscription.objects.create(
             user=self.user,
@@ -197,6 +209,7 @@ class ProjectDetailTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(AIPlan.objects.filter(project=self.project).exists())
 
+    # Verify that AI plan generation stores a temporary drawing preview
     def test_generate_plan_stores_temporary_drawing_preview(self):
         fake_output = '{"materials": ["Boards"], "steps": ["Step 1"], "cost": 40, "safety": "Use goggles"}'
 
@@ -209,6 +222,7 @@ class ProjectDetailTests(TestCase):
         plan = AIPlan.objects.get(project=self.project)
         self.assertEqual(plan.temporary_drawing_data, 'https://example.com/blueprint.png')
 
+    # Verify that saving a drawing moves it from temporary storage to permanent storage
     def test_save_drawing_moves_temporary_to_permanent(self):
         AIPlan.objects.create(
             project=self.project,
@@ -229,6 +243,7 @@ class ProjectDetailTests(TestCase):
 
 
 class ProjectListTests(TestCase):
+    # Set up a test user and project before each project list test
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             username='tester',
@@ -243,6 +258,7 @@ class ProjectListTests(TestCase):
             budget='500',
         )
 
+    # Verify that the project list displays the latest AI plan preview
     def test_project_list_shows_latest_ai_plan_preview(self):
         AIPlan.objects.create(
             project=self.project,

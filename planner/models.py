@@ -2,6 +2,7 @@ from django.db import models
 from projects.models import Project
 
 
+# Store AI-generated plans and generated content linked to a DIY project
 class AIPlan(models.Model):
     project = models.ForeignKey(
         Project,
@@ -23,5 +24,6 @@ class AIPlan(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Return a readable representation of the AI plan using the project title
     def __str__(self):
         return f"Plan for {self.project.title}"

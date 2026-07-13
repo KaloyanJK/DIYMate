@@ -3,17 +3,17 @@ import os
 
 from openai import OpenAI
 
-
+# Define the image sizes supported by the OpenAI image generation API
 SUPPORTED_IMAGE_SIZES = {"1024x1024", "1024x1536", "1536x1024", "auto"}
 
-
+# Create and configure an OpenAI client using the provided or environment API key
 def _get_client(api_key=None):
     resolved_api_key = api_key or os.environ.get("OPENAI_API_KEY")
     if not resolved_api_key:
         raise RuntimeError("OPENAI_API_KEY is not configured.")
     return OpenAI(api_key=resolved_api_key)
 
-
+# Generate an AI image and return it as a data URL or image URL
 def generate_image_data_url(prompt, api_key=None, model="gpt-image-1", size="1024x1024"):
     client = _get_client(api_key=api_key)
     resolved_size = size if size in SUPPORTED_IMAGE_SIZES else "auto"

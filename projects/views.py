@@ -18,7 +18,7 @@ from .models import Project
 
 text_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-
+# Normalize AI-generated steps by removing numbering and cleaning formatting
 def normalize_steps(steps):
     normalized = []
     for step in steps:
@@ -29,7 +29,7 @@ def normalize_steps(steps):
             normalized.append(cleaned)
     return normalized
 
-
+# Build the AI prompt used to generate a project plan
 def build_plan_prompt(project):
     return f"""
     {AI_SYSTEM_INSTRUCTIONS}
@@ -59,7 +59,7 @@ def build_plan_prompt(project):
     }}
     """
 
-
+# Build the AI prompt used to generate a technical project drawing
 def build_drawing_prompt(project):
     return f"""
 Create a technical blueprint-style DIY drawing for this project.
@@ -79,7 +79,7 @@ Mandatory visual output requirements:
 - Respect the provided project dimensions.
 """.strip()
 
-
+# Parse AI response text and convert JSON output into Python data
 def parse_ai_json_output(output):
     output = (output or "").strip()
     if output.startswith("```"):
@@ -87,7 +87,7 @@ def parse_ai_json_output(output):
         output = output.replace("json", "", 1).strip()
     return json.loads(output)
 
-
+# Generate a structured project plan response using OpenAI
 def generate_plan_text(prompt):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
@@ -103,7 +103,7 @@ def generate_plan_text(prompt):
     )
     return response.choices[0].message.content
 
-
+# Generate a technical drawing preview using OpenAI image generation
 def generate_drawing_preview(project):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
@@ -113,7 +113,7 @@ def generate_drawing_preview(project):
     image_data_url = openai_generate_image_data_url(api_key=api_key, prompt=drawing_prompt)
     return image_data_url, drawing_prompt
 
-
+# Save or replace the AI-generated plan for a project
 def save_ai_plan(project, data, temporary_drawing_data=None, drawing_prompt=None):
     AIPlan.objects.filter(project=project).delete()
     plan = AIPlan.objects.create(
@@ -132,6 +132,7 @@ def save_ai_plan(project, data, temporary_drawing_data=None, drawing_prompt=None
 
 
 @login_required
+# Create a new DIY project for the logged-in user
 def create_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST, user=request.user)
@@ -148,12 +149,14 @@ def create_project(request):
 
 
 @login_required
+# Display all projects belonging to the logged-in user
 def project_list(request):
     projects = Project.objects.filter(user=request.user)
     return render(request, 'projects/project_list.html', {'projects': projects})
 
 
 @login_required
+# Display project details, AI plan, subscription data, and project navigation
 def project_detail(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)
     subscription = get_or_create_subscription(request.user)
@@ -186,6 +189,7 @@ def project_detail(request, pk):
 
 
 @login_required
+# Edit an existing project owned by the logged-in user
 def edit_project(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)
 
@@ -205,6 +209,7 @@ def edit_project(request, pk):
 
 
 @login_required
+# Delete a project owned by the logged-in user
 def delete_project(request, pk):
     project = get_object_or_404(Project, id=pk, user=request.user)
 

@@ -11,6 +11,7 @@ from .services import consume_ai_generation_credit
 
 
 class AuthenticationFlowTests(TestCase):
+    # Set up a test user before each test
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             username='tester',
@@ -18,6 +19,7 @@ class AuthenticationFlowTests(TestCase):
             password='StrongPass123!',
         )
 
+    # Verify that a new user can successfully sign up and profile data is created
     def test_user_can_sign_up(self):
         response = self.client.post(
             reverse('account_signup'),
@@ -45,6 +47,7 @@ class AuthenticationFlowTests(TestCase):
         self.assertEqual(profile.phone_number, '1234567890')
         self.assertEqual(profile.address, '10 New Street')
 
+    # Verify that a user can log in using valid username and password
     def test_user_can_log_in_with_username_and_password(self):
         response = self.client.post(
             reverse('account_login'),
@@ -65,6 +68,7 @@ class AuthenticationFlowTests(TestCase):
         self.assertEqual(event.attempted_identifier, 'tester')
         self.assertEqual(event.user, self.user)
 
+    # Verify that a failed login attempt creates a failed login event
     def test_failed_log_in_creates_login_event(self):
         response = self.client.post(
             reverse('account_login'),
@@ -84,12 +88,14 @@ class AuthenticationFlowTests(TestCase):
         self.assertEqual(event.result, LoginEvent.RESULT_FAILED)
         self.assertEqual(event.attempted_identifier, 'tester')
 
+    # Verify that the signup page loads correctly without configured social providers
     def test_signup_page_renders_without_social_apps(self):
         response = self.client.get(reverse('account_signup'))
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Create Account')
 
+    # Verify that an authenticated user can update profile information
     def test_profile_page_allows_updating_phone_and_address(self):
         self.client.force_login(self.user)
 
@@ -117,6 +123,7 @@ class AuthenticationFlowTests(TestCase):
 
 
 class BillingCheckoutTests(TestCase):
+    # Set up a user for billing-related tests
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             username='billingtester',
@@ -132,6 +139,8 @@ class BillingCheckoutTests(TestCase):
     )
     @patch('accounts.views._get_or_create_stripe_customer', return_value='cus_test_123')
     @patch('accounts.views.stripe.checkout.Session.create')
+    
+    # Verify that checkout creates a Stripe session using numeric price data
     def test_checkout_accepts_numeric_amount_via_price_data(self, mock_create, _mock_customer):
         self.client.force_login(self.user)
         mock_create.return_value = SimpleNamespace(url='https://example.com/checkout')
@@ -153,6 +162,8 @@ class BillingCheckoutTests(TestCase):
         STRIPE_PRICE_ID_PREMIUM='not_a_price',
     )
     @patch('accounts.views.stripe.checkout.Session.create')
+    
+    # Verify that checkout rejects an invalid Stripe price configuration
     def test_checkout_rejects_invalid_price_reference(self, mock_create):
         self.client.force_login(self.user)
 
@@ -164,6 +175,7 @@ class BillingCheckoutTests(TestCase):
 
 
 class SubscriptionAdminControlTests(TestCase):
+    # Set up a user for subscription administration tests
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             username='premiumadmin',
@@ -171,6 +183,7 @@ class SubscriptionAdminControlTests(TestCase):
             password='StrongPass123!',
         )
 
+    # Verify that assigning the Premium plan activates the subscription
     def test_setting_plan_to_premium_marks_subscription_active(self):
         subscription = Subscription.objects.create(user=self.user)
         subscription.plan = Subscription.PLAN_PREMIUM
@@ -179,6 +192,7 @@ class SubscriptionAdminControlTests(TestCase):
         subscription.refresh_from_db()
         self.assertTrue(subscription.is_active)
 
+    # Verify that Premium subscribers have unlimited AI generation usage
     def test_premium_plan_gets_unlimited_ai_usage(self):
         subscription = Subscription.objects.create(user=self.user, plan=Subscription.PLAN_PREMIUM)
         subscription.ai_usage_count = 999
@@ -190,6 +204,7 @@ class SubscriptionAdminControlTests(TestCase):
 
 
 class SubscriptionSuccessSyncTests(TestCase):
+    # Set up a user for subscription synchronization tests
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             username='syncuser',
@@ -199,6 +214,7 @@ class SubscriptionSuccessSyncTests(TestCase):
 
     @override_settings(STRIPE_SECRET_KEY='sk_test_123')
     @patch('accounts.views.stripe.checkout.Session.retrieve')
+    # Verify that the success callback synchronizes subscription details from Stripe
     def test_success_view_syncs_premium_status_from_checkout_session(self, mock_session_retrieve):
         self.client.force_login(self.user)
         mock_session_retrieve.return_value = {

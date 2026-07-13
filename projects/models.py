@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 
 
+# Store DIY project information created by a user
 class Project(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
@@ -14,9 +15,11 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Configure default ordering to display newest projects first
     # Order newest first
     class Meta:
         ordering = ['-created_at']
 
+    # Return the project title as its readable representation
     def __str__(self):
         return self.title

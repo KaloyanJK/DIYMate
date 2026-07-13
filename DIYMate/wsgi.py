@@ -8,9 +8,10 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 """
 
 import os
-
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DIYMate.settings')
 
+# Set the default Django settings module for the WSGI application
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DIYMate.settings')
+# Create the WSGI application used by the web server
 application = get_wsgi_application()

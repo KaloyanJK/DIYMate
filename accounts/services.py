@@ -4,18 +4,19 @@ from django.conf import settings
 from .models import Subscription
 
 
+# Define Stripe subscription statuses that are considered active
 ACTIVE_STRIPE_STATUSES = {'active', 'trialing'}
 
-
+# Retrieve an existing subscription or create one if it doesn't exist
 def get_or_create_subscription(user):
     subscription, _ = Subscription.objects.get_or_create(user=user)
     return subscription
 
-
+# Return the configured free AI usage limit
 def get_free_ai_limit():
-    return int(getattr(settings, 'FREE_AI_USAGE_LIMIT', 5))
+    return int(getattr(settings, 'FREE_AI_USAGE_LIMIT', 1))
 
-
+# Consume an AI generation credit or allow unlimited usage for Premium users
 def consume_ai_generation_credit(user):
     """
     Returns (allowed, subscription, message).
@@ -38,11 +39,11 @@ def consume_ai_generation_credit(user):
     subscription.save(update_fields=['ai_usage_count', 'updated_at'])
     return True, subscription, ''
 
-
+# Calculate the remaining free AI generations available
 def remaining_free_generations(subscription):
     return max(0, get_free_ai_limit() - subscription.ai_usage_count)
 
-
+# Update subscription details based on Stripe subscription data
 def update_subscription_from_stripe_payload(subscription, stripe_subscription):
     status = stripe_subscription.get('status')
     is_active = status in ACTIVE_STRIPE_STATUSES
@@ -66,7 +67,7 @@ def update_subscription_from_stripe_payload(subscription, stripe_subscription):
     subscription.renew_date = renew_date
     subscription.save()
 
-
+# Cancel the subscription and revert the user to the Free plan
 def mark_subscription_canceled(subscription):
     subscription.is_active = False
     subscription.plan = Subscription.PLAN_FREE

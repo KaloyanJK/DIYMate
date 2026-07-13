@@ -23,17 +23,18 @@ from .services import (
 )
 
 
+# Render the homepage template
 def home_view(request):
     return render(request, 'home.html')
 
-
+# Retrieve the client's IP address from the request headers
 def _get_request_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
         return x_forwarded_for.split(',')[0].strip()
     return request.META.get('REMOTE_ADDR')
 
-
+# Store login attempt details for security auditing and tracking
 def _record_login_event(request, identifier, user, success):
     profile = None
     if user:
@@ -51,7 +52,7 @@ def _record_login_event(request, identifier, user, success):
         address_snapshot=(profile.address if profile else ''),
     )
 
-
+# Handle user authentication using username/email and password
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -79,7 +80,7 @@ def login_view(request):
 
     return render(request, 'account/login.html', {'form': form})
 
-
+# Handle new user registration and automatic login after signup
 def signup_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -98,6 +99,7 @@ def signup_view(request):
 
 
 @login_required
+# Display the user's profile, subscription details, and AI usage information
 def profile_view(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
     subscription = get_or_create_subscription(request.user)
@@ -111,6 +113,7 @@ def profile_view(request):
 
 
 @login_required
+# Allow authenticated users to update their profile information
 def edit_profile_view(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
@@ -124,7 +127,7 @@ def edit_profile_view(request):
 
     return render(request, 'accounts/edit_profile.html', {'form': form, 'profile': profile})
 
-
+# Validate that Stripe configuration settings are available
 def _validate_stripe_configuration():
     if not settings.STRIPE_SECRET_KEY:
         return 'Stripe secret key is missing. Set STRIPE_SECRET_KEY.'
@@ -132,7 +135,7 @@ def _validate_stripe_configuration():
         return 'Premium price id is missing. Set STRIPE_PRICE_ID_PREMIUM.'
     return ''
 
-
+# Build Stripe checkout line items using either a price ID or numeric amount
 def _build_checkout_line_item():
     price_reference = (settings.STRIPE_PRICE_ID_PREMIUM or '').strip()
 
@@ -166,7 +169,7 @@ def _build_checkout_line_item():
         'quantity': 1,
     }, ''
 
-
+# Format currency values with the correct currency symbol
 def _format_currency(amount, currency):
     symbols = {
         'gbp': '£',
@@ -176,7 +179,7 @@ def _format_currency(amount, currency):
     symbol = symbols.get(currency.lower(), f'{currency.upper()} ')
     return f'{symbol}{amount:.2f}'
 
-
+# Prepare pricing information to display on billing pages
 def _get_billing_display_context():
     price_reference = (settings.STRIPE_PRICE_ID_PREMIUM or '').strip()
     currency = getattr(settings, 'STRIPE_CURRENCY', 'usd').lower()
@@ -209,7 +212,7 @@ def _get_billing_display_context():
         'interval': interval,
     }
 
-
+# Create a Stripe customer for a user if one does not already exist
 def _get_or_create_stripe_customer(subscription):
     if subscription.stripe_customer_id:
         return subscription.stripe_customer_id
@@ -223,7 +226,7 @@ def _get_or_create_stripe_customer(subscription):
     subscription.save(update_fields=['stripe_customer_id', 'updated_at'])
     return customer['id']
 
-
+# Synchronize local subscription data with Stripe checkout session details
 def _sync_subscription_from_checkout_session(user, session_id):
     if not session_id or not settings.STRIPE_SECRET_KEY:
         return False
@@ -268,6 +271,7 @@ def _sync_subscription_from_checkout_session(user, session_id):
 
 
 @login_required
+# Display billing information and subscription status
 def billing_info_view(request):
     subscription = get_or_create_subscription(request.user)
     pricing = _get_billing_display_context()
@@ -280,6 +284,7 @@ def billing_info_view(request):
 
 
 @login_required
+# Create a Stripe checkout session for upgrading to Premium
 def start_checkout_session(request):
     if request.method != 'POST':
         return redirect('profile')
@@ -324,6 +329,7 @@ def start_checkout_session(request):
 
 
 @login_required
+# Create a Stripe customer billing portal session
 def billing_portal(request):
     if request.method != 'POST':
         return redirect('profile')
@@ -347,6 +353,7 @@ def billing_portal(request):
 
 
 @login_required
+# Handle successful Stripe checkout and activate Premium access
 def subscription_success(request):
     session_id = request.GET.get('session_id', '').strip()
     was_synced = _sync_subscription_from_checkout_session(request.user, session_id)
@@ -359,12 +366,14 @@ def subscription_success(request):
 
 
 @login_required
+# Handle canceled Stripe checkout attempts
 def subscription_cancel(request):
     messages.info(request, 'Checkout canceled. You are still on the Free plan.')
     return redirect('profile')
 
 
 @csrf_exempt
+# Process Stripe webhook events and update subscription status
 def stripe_webhook(request):
     payload = request.body
     signature = request.META.get('HTTP_STRIPE_SIGNATURE', '')

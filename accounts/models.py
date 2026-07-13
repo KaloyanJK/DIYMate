@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-
+# Store additional profile information linked to a user account
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -11,11 +11,13 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=255, blank=True)
 
+    # Return a readable representation of the user's profile
     def __str__(self):
         return f"Profile for {self.user.username}"
 
-
+# Store login attempts for security monitoring and auditing
 class LoginEvent(models.Model):
+    # Define possible login attempt outcomes
     RESULT_SUCCESS = 'success'
     RESULT_FAILED = 'failed'
     RESULT_CHOICES = [
@@ -43,14 +45,18 @@ class LoginEvent(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Configure default ordering to show latest login events first
     class Meta:
         ordering = ['-created_at']
 
+    # Return a readable representation of a login event
     def __str__(self):
         return f"{self.attempted_identifier or 'unknown'} ({self.result})"
 
 
+# Store user subscription and payment-related information
 class Subscription(models.Model):
+    # Define available subscription plans
     PLAN_FREE = 'free'
     PLAN_PREMIUM = 'premium'
     PLAN_CHOICES = [
@@ -74,10 +80,12 @@ class Subscription(models.Model):
     renew_date = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Automatically update subscription active status based on selected plan
     def save(self, *args, **kwargs):
         # Keep admin plan changes authoritative: premium means active, free means inactive.
         self.is_active = self.plan == self.PLAN_PREMIUM
         super().save(*args, **kwargs)
 
+    # Return the username associated with the subscription
     def __str__(self):
         return self.user.username
