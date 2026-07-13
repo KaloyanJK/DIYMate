@@ -59,6 +59,11 @@
                     Home
                 </a>
 
+                <a class="nav-link {% if request.resolver_match.url_name == 'how_to_use' %}active{% endif %}"
+                   href="{% url 'how_to_use' %}">
+                    How To Use
+                </a>
+
 
                 {% if user.is_authenticated %}
 

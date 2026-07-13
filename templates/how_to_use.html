@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="billing-wrap howto-wrap" aria-labelledby="howto-title">
+    <header class="billing-hero howto-hero">
+        <p class="eyebrow">Quick Guide</p>
+        <h1 id="howto-title">How To Use DIYMate</h1>
+        <p class="subtitle">Follow these steps to go from a rough idea to a complete DIY plan with AI help.</p>
+    </header>
+
+    <section class="billing-grid howto-grid" aria-label="How to use steps">
+        <article class="plan-card free howto-step-card">
+            <h2>1. Create an account</h2>
+            <ul>
+                <li>Open Register and complete your details.</li>
+                <li>Log in using username or email.</li>
+                <li>Use Remember me if you want a longer session.</li>
+            </ul>
+        </article>
+
+        <article class="plan-card premium howto-step-card">
+            <h2>2. Create your first project</h2>
+            <ul>
+                <li>Go to Projects and click New Project.</li>
+                <li>Add title, description, dimensions, and budget.</li>
+                <li>Save to open the project detail page.</li>
+            </ul>
+        </article>
+
+        <article class="plan-card free howto-step-card">
+            <h2>3. Generate your AI plan</h2>
+            <ul>
+                <li>Click Generate AI Plan on the project page.</li>
+                <li>Review materials, safety, and step-by-step instructions.</li>
+                <li>The plan is cached so you can reopen it quickly.</li>
+            </ul>
+        </article>
+
+        <article class="plan-card premium howto-step-card">
+            <h2>4. Add inspirations and drawing</h2>
+            <ul>
+                <li>Generate inspiration ideas for style direction.</li>
+                <li>Premium users can generate one technical drawing per project.</li>
+                <li>Save or download drawing outputs from the same page.</li>
+            </ul>
+        </article>
+    </section>
+
+    <section class="account-billing howto-tips">
+        <h3>Best practice checklist</h3>
+        <div class="facts">
+            <div>
+                <span>Before building</span>
+                <strong>Verify all dimensions and safety steps manually.</strong>
+            </div>
+            <div>
+                <span>Plan management</span>
+                <strong>Edit project data, then regenerate only when needed.</strong>
+            </div>
+            <div>
+                <span>Free plan</span>
+                <strong>AI usage is limited by your remaining free generations.</strong>
+            </div>
+            <div>
+                <span>Premium plan</span>
+                <strong>Unlock unlimited text generation and project drawing tools.</strong>
+            </div>
+        </div>
+
+        <div class="actions" style="margin-top: 18px;">
+            {% if user.is_authenticated %}
+                <a href="{% url 'project_list' %}" class="btn primary">Go To Projects</a>
+                <a href="{% url 'billing_info' %}" class="btn premium">View Billing</a>
+            {% else %}
+                <a href="{% url 'account_signup' %}" class="btn primary">Create Account</a>
+                <a href="{% url 'account_login' %}" class="btn secondary">Login</a>
+            {% endif %}
+        </div>
+    </section>
+</section>
+{% endblock %}

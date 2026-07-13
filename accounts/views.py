@@ -27,6 +27,10 @@ from .services import (
 def home_view(request):
     return render(request, 'home.html')
 
+
+def how_to_use_view(request):
+    return render(request, 'how_to_use.html')
+
 # Retrieve the client's IP address from the request headers
 def _get_request_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
