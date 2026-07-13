@@ -519,6 +519,26 @@ body.light-mode .app-loading-modal__spinner {
     line-height: 1.35;
 }
 
+.howto-wrap {
+    max-width: 1080px;
+}
+
+.howto-grid {
+    margin-top: 2px;
+}
+
+.howto-step-card h2 {
+    font-size: clamp(20px, 2.2vw, 28px);
+}
+
+.howto-step-card ul {
+    margin-top: 12px;
+}
+
+.howto-step-card li {
+    line-height: 1.45;
+}
+
 body.modal-open {
     overflow: hidden;
 }

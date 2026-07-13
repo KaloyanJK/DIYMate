@@ -175,6 +175,18 @@ h5 {
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.18);
 }
 
+.navbar .navbar-nav .nav-link.active,
+.navbar .navbar-nav .nav-link[aria-current="page"] {
+    color: var(--nav-link-active) !important;
+    background-color: var(--nav-link-active-bg) !important;
+}
+
+body:not(.light-mode) .navbar .navbar-nav .nav-link.active,
+body:not(.light-mode) .navbar .navbar-nav .nav-link[aria-current="page"] {
+    color: #ffffff !important;
+    background-color: rgba(125, 211, 252, 0.22) !important;
+}
+
 body.light-mode .navbar-nav .nav-link.active,
 body.light-mode .navbar-nav .nav-link[aria-current="page"] {
     text-shadow: none;
