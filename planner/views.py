@@ -166,11 +166,6 @@ def generate_plan(request, project_id):
         return redirect("project_detail", pk=project_id)
 
     project = get_object_or_404(Project, id=project_id, user=request.user)
-    existing_plan = AIPlan.objects.filter(project=project).order_by("-created_at").first()
-
-    if existing_plan:
-        messages.info(request, "Using cached AI plan for this project.")
-        return redirect("project_detail", pk=project.id)
 
     allowed, _, usage_message = consume_ai_generation_credit(request.user)
     if not allowed:
@@ -189,16 +184,26 @@ def generate_plan(request, project_id):
 
     steps = normalize_steps(data.get("steps", []))[:6]
 
-    AIPlan.objects.create(
+    temporary_drawing_data, drawing_prompt = generate_drawing_preview(project)
+
+    new_plan = AIPlan.objects.create(
         project=project,
         materials=data.get("materials", []),
         steps=steps,
         cost=data.get("cost", 0),
         safety=data.get("safety", ""),
         generated_images=[],
-        temporary_drawing_data=None,
-        temporary_drawing_prompt=None,
+        temporary_drawing_data=temporary_drawing_data,
+        temporary_drawing_prompt=drawing_prompt,
     )
+
+    existing_plan_ids = list(
+        AIPlan.objects.filter(project=project)
+        .exclude(pk=new_plan.pk)
+        .values_list("pk", flat=True)
+    )
+    if existing_plan_ids:
+        AIPlan.objects.filter(pk__in=existing_plan_ids).delete()
 
     messages.success(request, "AI plan generated. Generate drawing and inspiration only if needed.")
     return redirect("project_detail", pk=project.id)

@@ -281,7 +281,7 @@ Billing state is synchronized from Stripe events and checkout/session sync logic
 
 ## AI Usage Declaration
 
-DIYMate uses AI for planning assistance and optional design assets.
+DIYMate uses AI (Microsoft copilot) for planning assistance and optional design assets.
 
 - Text generation: project plans, material suggestions, concise step lists, safety notes, and inspiration ideas.
 - Image generation: technical blueprint-style drawing previews.
