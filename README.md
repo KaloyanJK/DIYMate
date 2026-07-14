@@ -5,6 +5,7 @@ Deployed App Link: [LINK](https://diy-mate-94e4f9025a67.herokuapp.com/)
 ## Table of Contents
 
 - [Mockups](#mockups)
+- [Color palets] (#color-palets)
 - [Project Overview](#project-overview)
 - [Project Updates](#project-updates)
 - [Goals & Objectives](#goals--objectives)
@@ -45,6 +46,10 @@ Mockup placeholders :
 - Home page mockup: ![](validations/mockups/Homa_page.png)
 - Login page mockup: ![](validations/mockups/Login_page.png)
 - Regiter page mockup: ![](validations/mockups/Register_page.png)
+
+## Color palets
+
+- Color palets: ![](validations/color_palets.jpg)
 
 ## Project Overview
 
