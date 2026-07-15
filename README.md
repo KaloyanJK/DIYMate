@@ -5,7 +5,7 @@ Deployed App Link: [LINK](https://diy-mate-94e4f9025a67.herokuapp.com/)
 ## Table of Contents
 
 - [Mockups](#mockups)
-- [Color palets] (#color-palets)
+- [Color palets](#color-palets)
 - [Project Overview](#project-overview)
 - [Project Updates](#project-updates)
 - [Goals & Objectives](#goals--objectives)
@@ -32,6 +32,8 @@ Deployed App Link: [LINK](https://diy-mate-94e4f9025a67.herokuapp.com/)
 - [Screenshots](#screenshots)
 - [Figma Designs & Wireframes](#figma-designs--wireframes)
 - [VALIDATIONS.md](VALIDATIONS.md)
+- [How it Works](#how_it_works)
+
 
 ## Mockups
 
@@ -371,3 +373,9 @@ Leave image links empty for now and fill later:
 ## Wireframes
 
 - Wireframes images in [WIREFRAMES.md](WIREFRAMES.md).
+
+## How it Works
+
+- [Accounts App Architecture](validations/how_it_works/Accounts_App_Architecture.md).
+- [Planner App Architecture](validations/how_it_works/Planner_App_Architecture.md).
+- [Projects App Architecture](validations/how_it_works/Projects_App_Architecture.md).
